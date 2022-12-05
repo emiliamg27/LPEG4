@@ -41,7 +41,18 @@ write.csv(dflow,"ds21903993(33).csv")
 
 write.csv(dfccaa,"ds21903993(34).csv")
 ##Gasolinera más barata
-  
+
+
+##Unimos con un dataset con la poblacion total, hombres y mujeres de cada municipio
+library(readxl)
+pobmun21 <- read_excel("C:/Users/34629/LPE_2023/pobmun21.xlsx", skip = 1)%>%view()
+columnapob<-select(pobmun21, POB21, id_provincia,HOMBRES,MUJERES)
+
+columnapob%>%view()
+df_pob <-merge(x = df3, y = columnapob, by = "id_provincia", all.x = TRUE)
+
+df_pob%>%view()
+
 # READING AND WRITING (FILES) ---------------------------------------------
 
 
