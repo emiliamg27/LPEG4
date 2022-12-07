@@ -5,15 +5,34 @@
 
 # LOADING LIBS ------------------------------------------------------------
 if(!require("pacman")) install.packages("pacman")
-p_load(shiny, shinydashboard, shinydashboardPlus, shinyjs, shinywidgets, shinybusy, tidyverse, magrittr, janitor, lubridate, tidyr, httr)
+p_load(shiny, shinydashboard, shinydashboardPlus, shinyjs, shinyWidgets, shinybusy, tidyverse, magrittr, janitor, lubridate, tidyr, httr)
 
 shinyServer(function(input, output)
 {
-  if(input$CCAA ==1){
-    print('hola')
-  }else{
-    print('hola2')
-  }
-}
   
-)
+  output$result <- renderText({
+    paste("You chose", input$CCAA)
+  })   
+    
+  # if(input$CCAA ==1){
+  #   output$ccaa = renderInfoBox({
+  #     valueBox(
+  #       value = 'hola',
+  #       subtitle = '',
+  #       color = 'blue',
+  #       width = 12
+  #     )
+  #   })
+  # }else{
+  #   output$ccaa = renderInfoBox({
+  #     valueBox(
+  #       value = 'hola2',
+  #       subtitle = '',
+  #       color = 'green',
+  #       width = 12
+  #     )
+  #   })
+  
+  })
+
+  

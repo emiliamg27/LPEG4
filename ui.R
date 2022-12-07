@@ -9,13 +9,12 @@ p_load(shiny, shinydashboard, shinyjs, shinyWidgets)
 
 ui = dashboardPage(
   skin = 'blue', 
-  dashboardHeader(title = 'Buscador de gasolineras'),
+  dashboardHeader(title = 'Gasolineras'),
   dashboardSidebar(
     useShinyjs(),
     column(10, 
            fluidRow(
-             selectInput(
-               'CCAA', 
+             selectInput('CCAA', 
                'Selecciona una CCAA',
                choices = list(
                  'Andalucía' = 1,
@@ -41,6 +40,38 @@ ui = dashboardPage(
                selected = NULL
              )
            )
+           ),
+    column(10, 
+           fluidRow(
+             sliderInput('pob',
+                         'Seleccione el rango de población',
+                         min = 0, 
+                         max = 100, 
+                         value = 50
+               
+             )
            )
-  )
+      
+    ),
+    column(10,
+           fluidRow(
+             radioButtons('lowcost',
+                          '¿Quiere una gasolinera Lowcost?',
+                          choices = list(
+                            'Si' = 1,
+                            'No' = 2
+                          )
+               
+             )
+           )
+      
+    )
+  ),
+  dashboardBody(fluidRow(
+    box(
+      title = 'Hola',
+      status = 'danger',
+      fluidRow(infoBoxOutput('ccaa', width = 10))
+    )
+  ))
 )
