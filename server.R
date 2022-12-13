@@ -8,11 +8,11 @@ if(!require("pacman")) install.packages("pacman")
 p_load(readxl, shiny, shinydashboard, shinydashboardPlus, shinyjs, shinyWidgets, shinybusy, tidyverse, magrittr, janitor, lubridate, tidyr, httr)
 
 shinyServer(function(input, output){
-  file = reactive({
-    fichero <- input$fichero
-    df <- read_excel(paste(fichero$datapath, '.xlsx'))
-    df
-  })
+  # file = reactive({
+  #   fichero <- input$fichero
+  #   df <- read_excel(paste(fichero$datapath, '.xlsx'))
+  #   df
+  # })
   observeEvent(input$boton, {
     show_modal_spinner(
       spin = 'bounce',

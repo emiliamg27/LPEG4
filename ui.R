@@ -14,15 +14,15 @@ ui = dashboardPage(
   #Barra lateral
   dashboardSidebar(
     useShinyjs(),
-    column(10,
-           fluidRow(
-             fileInput(
-               'fichero',
-               label = 'Agregar fichero',
-               accept = c('.xls')
-             )
-           )
-           ),
+    # column(10,
+    #        fluidRow(
+    #          fileInput(
+    #            'fichero',
+    #            label = 'Agregar fichero',
+    #            accept = c('.xls')
+    #          )
+    #        )
+    #        ),
     column(10, 
            fluidRow(
              selectInput('CCAA', 
