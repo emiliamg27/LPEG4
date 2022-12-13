@@ -5,34 +5,43 @@
 
 # LOADING LIBS ------------------------------------------------------------
 if(!require("pacman")) install.packages("pacman")
-p_load(shiny, shinydashboard, shinydashboardPlus, shinyjs, shinyWidgets, shinybusy, tidyverse, magrittr, janitor, lubridate, tidyr, httr)
+p_load(readxl, shiny, shinydashboard, shinydashboardPlus, shinyjs, shinyWidgets, shinybusy, tidyverse, magrittr, janitor, lubridate, tidyr, httr)
 
-shinyServer(function(input, output)
-{
-  
-  output$result <- renderText({
-    paste("You chose", input$CCAA)
-  })   
-    
-  # if(input$CCAA ==1){
-  #   output$ccaa = renderInfoBox({
-  #     valueBox(
-  #       value = 'hola',
-  #       subtitle = '',
-  #       color = 'blue',
-  #       width = 12
-  #     )
-  #   })
-  # }else{
-  #   output$ccaa = renderInfoBox({
-  #     valueBox(
-  #       value = 'hola2',
-  #       subtitle = '',
-  #       color = 'green',
-  #       width = 12
-  #     )
-  #   })
-  
+shinyServer(function(input, output){
+  file = reactive({
+    fichero <- input$fichero
+    df <- read_excel(paste(fichero$datapath, '.xlsx'))
+    df
   })
-
+  observeEvent(input$boton, {
+    show_modal_spinner(
+      spin = 'bounce',
+      color = 'blue',
+      text = 'Cargando...'
+    )
+    Sys.sleep(1)
+    remove_modal_spinner()
+  
+    if (input$CCAA == 1){
+      output$datos = renderInfoBox({
+        valueBox (
+          value = 1,
+          subtitle = 'datosss',
+          color = 'blue',
+          width = 12
+        )
+      })
+    }
+    else if (input$CCAA != 1){
+      output$datos = renderInfoBox({
+        valueBox (
+          value = 1,
+          subtitle = 'holi',
+          color = 'blue',
+          width = 12
+        )
+      })
+    }
+  })
+})
   

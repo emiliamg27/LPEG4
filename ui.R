@@ -8,16 +8,25 @@ if(!require("pacman")) install.packages("pacman")
 p_load(shiny, shinydashboard, shinyjs, shinyWidgets)
 
 ui = dashboardPage(
-  skin = 'blue-light', 
+  skin = 'blue', 
   #Cabecera
   dashboardHeader(title = 'Gasolineras'),
   #Barra lateral
   dashboardSidebar(
     useShinyjs(),
+    column(10,
+           fluidRow(
+             fileInput(
+               'fichero',
+               label = 'Agregar fichero',
+               accept = c('.xls')
+             )
+           )
+           ),
     column(10, 
            fluidRow(
              selectInput('CCAA', 
-                         shiny::HTML("<p><span style='color: rgb(3, 3, 3)'>Seleccione una CCAA</span></p>"),
+                         label = 'Seleccione una CCAA', 
                          choices = list(
                            'Andalucía' = 1,
                            'Aragón' = 2,
@@ -39,14 +48,14 @@ ui = dashboardPage(
                            'Ceuta' = 18,
                            'Melilla' = 19
                          ),
-                         selected = NULL
+                         selected = 1
                         )
                 )
            ),
     column(10, 
            fluidRow(
              sliderInput('pob',
-                         shiny::HTML("<p><span style='color: rgb(3, 3, 3)'>Seleccione el rango de población</span></p>"),
+                         label = 'Seleccione el rango de población',
                          min = 0, 
                          max = 100, 
                          value = 50
@@ -58,7 +67,7 @@ ui = dashboardPage(
     column(10,
            fluidRow(
              radioButtons('lowcost',
-                          shiny::HTML("<p><span style='color: rgb(3, 3, 3)'>¿Quiere una gasolinera LowCost?</span></p>"),
+                          label = '¿Quiere una gasolinera LowCost?',
                           choices = list(
                             'Si' = 1,
                             'No' = 2
@@ -91,11 +100,7 @@ ui = dashboardPage(
       tabPanel(
         'mapa', 
         fluidRow(
-          box(
-            width = 12,
-            title = 'Mapa gasolineras',
-            status = 'primary'
-          )
+          infoBoxOutput('datos', width = 6)
         )
       ),
       tabPanel(
