@@ -72,10 +72,8 @@ ui = dashboardPage(
                             'Si' = 1,
                             'No' = 2
                           )
-               
              )
            )
-      
     ),
     column(10,
            fluidRow(
@@ -100,7 +98,8 @@ ui = dashboardPage(
       tabPanel(
         'mapa', 
         fluidRow(
-          infoBoxOutput('datos', width = 6)
+          infoBoxOutput('datos', width = 6),
+          infoBoxOutput('rango', width = 6),
         )
       ),
       tabPanel(

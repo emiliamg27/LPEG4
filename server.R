@@ -19,7 +19,7 @@ shinyServer(function(input, output){
       color = 'blue',
       text = 'Cargando...'
     )
-    Sys.sleep(1)
+    Sys.sleep(2)
     remove_modal_spinner()
   
     if (input$CCAA == 1){
@@ -42,6 +42,14 @@ shinyServer(function(input, output){
         )
       })
     }
+    output$rango = renderInfoBox({
+      valueBox (
+        value = input$pob,
+        subtitle = 'poblacion',
+        color = 'blue',
+        width = 12
+      )
+    })
   })
 })
   
