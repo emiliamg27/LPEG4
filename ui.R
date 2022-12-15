@@ -5,12 +5,14 @@
 
 # LOADING LIBS ------------------------------------------------------------
 if(!require("pacman")) install.packages("pacman")
-p_load(shiny, shinydashboard, shinyjs, shinyWidgets)
+p_load(shiny, shinydashboard, shinyjs, shinyWidgets, leaflet,leaflet.extras)
 
 ui = dashboardPage(
   skin = 'blue', 
   #Cabecera
   dashboardHeader(title = 'Gasolineras'),
+  
+  # Barra lateral  ------------------------------------------------------------
   #Barra lateral
   dashboardSidebar(
     useShinyjs(),
@@ -87,7 +89,7 @@ ui = dashboardPage(
                  style = 'minimal'
                ),
                align = 'center'
-             ),
+             )
            )
     )
   ),
@@ -96,22 +98,24 @@ ui = dashboardPage(
   dashboardBody(
     tabsetPanel(
       tabPanel(
-        'mapa', 
+        'Mapa', 
         fluidRow(
           infoBoxOutput('datos', width = 6),
-          infoBoxOutput('rango', width = 6),
+          infoBoxOutput('rango', width = 6)
         )
       ),
       tabPanel(
-        'mapa2', 
+        'Estadísticas', 
         fluidRow(
-          box(
-            width = 12,
-            title = 'Mapa2 gasolineras',
-            status = 'primary'
+          box(width = 12,
+              title = 'hola',
+              status = 'primary',
+              dataTableOutput('gas'),
+              downloadButton("descargar", "Descargar csv")
+              )
           )
-        )
-      )
+      
     )
   )
+)
 )
