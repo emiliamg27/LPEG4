@@ -10,7 +10,12 @@ p_load(shiny, shinydashboard, shinyjs, shinyWidgets, leaflet,leaflet.extras)
 ui = dashboardPage(
   skin = 'blue', 
   #Cabecera
-  dashboardHeader(title = 'Gasolineras'),
+  dashboardHeader(
+    title = 'Gasolineras',
+    tags$li(class = "dropdown",
+            tags$li(class = "dropdown", textOutput("logged_user"), style = "padding-top: 15px; padding-bottom: 15px; color: #fff;"),
+            tags$li(class = "dropdown", actionLink("login", textOutput("logintext"))))
+  ),
   
   # Barra lateral  ------------------------------------------------------------
   #Barra lateral

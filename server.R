@@ -9,7 +9,27 @@ p_load(readxl, shiny, shinydashboard, shinydashboardPlus, shinyjs, shinyWidgets,
        shinybusy, tidyverse, magrittr, janitor, lubridate, tidyr, httr, jsonlite, 
        leaflet, geosphere, readxl)
 
-shinyServer(function(input, output){
+shinyServer(function(input, output, session){
+  
+  logged_in <- reactiveVal(FALSE)
+  
+  # switch value of logged_in variable to TRUE after login succeeded
+  observeEvent(input$login, {
+    logged_in(ifelse(logged_in(), FALSE, TRUE))
+  })
+  
+  # show "Login" or "Logout" depending on whether logged out or in
+  output$logintext <- renderText({
+    if(logged_in()) return("Logout here.")
+    return("Login here")
+  })
+  
+  # show text of logged in user
+  output$logged_user <- renderText({
+    if(logged_in()) return("User 1 is logged in.")
+    return("")
+  })
+  
   
   # file = reactive({
   #   fichero <- input$fichero
