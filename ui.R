@@ -105,8 +105,10 @@ ui = dashboardPage(
       tabPanel(
         'Mapa', 
         fluidRow(
-          infoBoxOutput('datos', width = 6),
-          infoBoxOutput('rango', width = 6)
+          box(width = 12,
+            infoBoxOutput('datos', width = 6),
+            infoBoxOutput('rango', width = 6)
+          )
         )
       ),
       tabPanel(
