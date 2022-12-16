@@ -44,15 +44,16 @@ df3 %>% select(precio_gasoleo_a, precio_gasolina_95_e5, idccaa, rotulo, lowcost)
 
 
 ##Unimos con un dataset con la poblacion total, hombres y mujeres de cada municipio
+
 library(readxl)
-pobmun21 <- read_excel("pobmun21.xlsx", skip = 1)
-columnapob<-select(pobmun21, POB21, id_provincia,HOMBRES,MUJERES)
+pobmun21 <- read_excel("pobmun21.xlsx", skip = 1)%>%view()
+columnapob<-select(pobmun21, POB21, municipio,id_provincia,HOMBRES,MUJERES)
 
-#columnapob%>%view()
-#df_pob <-merge(x = df3, y = columnapob, by = "id_provincia", all.x = FALSE)
-df_pob <- merge(df3, columnapob, by = 'id_provincia', all.x = FALSE, all.y = FALSE)
+columnapob%>%view()
+df_pob <-merge(x = df3, y = columnapob, by=c("municipio"), all.x = TRUE)
+nrow(df_pob[duplicated(df_pob), ])
 
-df_pob%>%view()
+df_pob_d <- df_pob %>% distinct(direccion, .keep_all = TRUE)
 
 # READING AND WRITING (FILES) ---------------------------------------------
 
