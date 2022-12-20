@@ -59,6 +59,11 @@ ui = dashboardPage(
                         )
                 )
            ),
+    column(10,
+           fluidRow(
+             textInput(inputId = NULL, label = NULL , value = "", width = NULL, placeholder = "Escriba una provincia")
+           )
+    ),
     column(10, 
            fluidRow(
              sliderInput('pob',
@@ -82,6 +87,21 @@ ui = dashboardPage(
              )
            )
     ),
+    column(12,
+           fluidRow(
+           selectInput ('tipogasoleo',
+                        label = 'Seleccione un carburante', 
+                        choices = list(
+                          'Precio Gasóleo A' = 1,
+                          'Precio Gasóleo Premium' = 2,
+                          'Precio Gasolina 95 e5' = 3,
+                          'Precio Gasolina 98 e5' = 4
+                        ),
+                        selected = 1
+           )
+           )
+           ),
+    
     column(10,
            fluidRow(
              column(
@@ -122,6 +142,17 @@ ui = dashboardPage(
               )
           )
       
+    ),
+    tabPanel(
+      'Empresario', 
+      fluidRow(
+        box(width = 12,
+            title = 'Datos de interés',
+            status = 'primary',
+            dataTableOutput('gas'),
+            downloadButton("descargar", "Descargar csv")
+        )
+      )
     )
   )
 )

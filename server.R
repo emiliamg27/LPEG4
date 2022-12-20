@@ -80,6 +80,28 @@ shinyServer(function(input, output, session){
         )
       })
     }
+    else if (input$precio_gasoleo_a == 1){
+      output$precios = renderInfoBox({
+        valueBox (
+          value = 1,
+          subtitle = 'datosss',
+          color = 'blue',
+          width = 12
+        )
+      })
+    }
+    else if (input$precio_gasoleo_a != 1){
+      output$precios = renderInfoBox({
+        valueBox (
+          value = 1,
+          subtitle = 'datosss',
+          color = 'blue',
+          width = 12
+        )
+      })
+    }
+    output$value <- renderText({ input$caption })
+    
     output$rango = renderInfoBox({
       valueBox (
         value = input$pob,
