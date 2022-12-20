@@ -59,12 +59,26 @@ nrow(df_pob[duplicated(df_pob), ])
 
 df_pob_d <- df_pob %>% distinct(direccion, .keep_all = TRUE)
 
-#Añadimos distancia
+#Añadimos tipo servicio
 
 library(readxl)
 tipo_servicio <- read_excel("preciosEESS_es.xls", skip = 3)
 columnaserv<-select(tipo_servicio, direccion, Tipo_servicio)
 df_servicio <-merge(x = df_pob_d, y = columnaserv, by=c("direccion"), all.x = TRUE)
+#Añadimos distancia
+p_load(tidyverse, janitor, jsonlite, leaflet, geosphere, mapsapi,xml2,mapsapi)
+prueba<-df_servicio %>% select(latitud,longitud_wgs84,municipio, rotulo,direccion)
+
+
+
+#ds_w_pob %>% select(pob21,municipio) %>% filter(pob21>=15000) %>%count(pob21,municipio, sort = TRUE) %>%  view()
+uem <- c(-3.919257897378161, 40.373942679873714)
+
+
+
+distancias_villa <- prueba %>%select(longitud_wgs84,latitud) %>% distGeo(uem) %>% view()
+
+prueba2<-distancias_villa%>%  mutate(distancias = round(distancias_villa/1000, digits = 2)) %>% view()
 
 
 
