@@ -26,6 +26,10 @@ str_squish(df1$rotulo)
 ##Clasificamos por gasolineras baratas y no baratas NUEVA COLUMNA
 df2 <- df1 %>% mutate(lowcost =! rotulo %in% c("CEPSA", "REPSOL", "BP", "SHELL"))
 
+#Filtrado por 24 h
+#df2 %>% count(horario, sort = TRUE)
+#no_24h <- df2 %>% filter(horario == 'L-D: 24H') %>% select(!horario) %>% view()
+
 ##Columna nombre ccaa
 df3 <- df2%>% mutate(df2,ccaa = ifelse (idccaa=="01","ANDALUCIA",ifelse (idccaa=="02","ARAGON", ifelse (idccaa=="03","ASTURIAS", ifelse (idccaa=="04","BALEARES", 
                                                                                                                                                 ifelse (idccaa=="05","CANARIAS",ifelse (idccaa=="06","CANTABRIA", ifelse (idccaa=="07","CASTILLA Y LEON", 
@@ -54,6 +58,15 @@ df_pob <-merge(x = df3, y = columnapob, by=c("municipio"), all.x = TRUE)
 nrow(df_pob[duplicated(df_pob), ])
 
 df_pob_d <- df_pob %>% distinct(direccion, .keep_all = TRUE)
+
+#Añadimos distancia
+
+library(readxl)
+tipo_servicio <- read_excel("preciosEESS_es.xls", skip = 3)
+columnaserv<-select(tipo_servicio, direccion, Tipo_servicio)
+df_servicio <-merge(x = df_pob_d, y = columnaserv, by=c("direccion"), all.x = TRUE)
+
+
 
 # READING AND WRITING (FILES) ---------------------------------------------
 
