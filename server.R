@@ -100,7 +100,7 @@ shinyServer(function(input, output, session){
         )
       })
     }
-    output$value <- renderText({ input$caption })
+    # else if (output$value <- renderText({ input$caption }))
     
     output$rango = renderInfoBox({
       valueBox (
