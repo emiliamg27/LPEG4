@@ -121,7 +121,22 @@ shinyServer(function(input, output, session){
         write.csv(ds_low_cost %>% select(rotulo, municipio), fname)
       }
     )
+    pal <- colorFactor(palette = "YlGnBu", levels = ds_low_cost$ccaa, reverse = TRUE)
+    
+    
+    output$mymap <-renderLeaflet({
       
+      leaflet(data = ds_low_cost)%>% 
+        addTiles()%>%
+        addCircleMarkers(lng = ~ds_low_cost$longitud_wgs84,lat = ~ds_low_cost$latitud,radius = 1.2,color = ~pal(ccaa))%>% 
+        setView(lng = ~ds_low_cost$longitud_wgs84,lat = ~ds_low_cost$latitud,zoom=2)
+      
+    })
+    
+    #leafletProxy("mymap", data = ds_low_cost) %>%
+    #  addTiles() %>% 
+    #  clearShapes() %>% 
+    #  addPolygons(data = ds_low_cost, fillColor = ~pal(ccaa), fillOpacity = 0.7, weight = 2)  
   })
 })
   

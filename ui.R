@@ -125,12 +125,12 @@ ui = dashboardPage(
       tabPanel(
         'Mapa', 
         fluidRow(
-          box(width = 12,
-            infoBoxOutput('datos', width = 6),
-            infoBoxOutput('rango', width = 6)
-          )
+          box(width=12,
+              leafletOutput(outputId = "mymap")),
+                 
         )
       ),
+      
       tabPanel(
         'Estadísticas', 
         fluidRow(
@@ -157,3 +157,4 @@ ui = dashboardPage(
   )
 )
 )
+
