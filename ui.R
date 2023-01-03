@@ -5,28 +5,28 @@
 
 # LOADING LIBS ------------------------------------------------------------
 if(!require("pacman")) install.packages("pacman")
-p_load(shiny, shinydashboard, shinyjs, shinyWidgets, leaflet,leaflet.extras)
+p_load(shiny, shinydashboard, shinyjs, shinyWidgets, leaflet,leaflet.extras, data.table)
 
 DT <- data.table(
-  Andalucía = c('Almería', 'Cádiz', 'Córdoba', 'Granada', 'Huelva', 'Jaén', 'Málaga', 'Sevilla'),
-  Aragón = c('Huesca', 'Teruel', 'Zaragoza'),
-  Asturias = c('Asturias'),
-  Islas_Baleares = c('Islas Baleares'),
-  Islas_Canarias = c('Las Palmas', 'Santa Cruz de Tenerife'),
-  Cantabria = c('Cantabria'),
-  Castilla_y_León = c('granada', 'sevilla', 'cordoba', 'jaen'),
-  Castilla_La_Mancha = c('guada', 'albacete', 'cuenca', ''),
-  Cataluña = c('granada', 'sevilla', 'cordoba', 'jaen'),
-  Comunidad_Valenciana = c('guada', 'albacete', 'cuenca', ''),
-  Extremadura = c('granada', 'sevilla', 'cordoba', 'jaen'),
-  Galicia = c('guada', 'albacete', 'cuenca', ''),
-  Comunidad_de_Madrid = c('granada', 'sevilla', 'cordoba', 'jaen'),
-  Murcia = c('guada', 'albacete', 'cuenca', ''),
-  Navarra = c('granada', 'sevilla', 'cordoba', 'jaen'),
-  País_Vasco = c('guada', 'albacete', 'cuenca', ''),
-  La_Rioja = c('granada', 'sevilla', 'cordoba', 'jaen'),
-  Ceuta = c('guada', 'albacete', 'cuenca', ''),
-  Melilla = c('granada', 'sevilla', 'cordoba', 'jaen')
+  Andalucía = c('Almería', 'Cádiz', 'Córdoba', 'Granada', 'Huelva', 'Jaén', 'Málaga', 'Sevilla', ''),
+  Aragón = c('Huesca', 'Teruel', 'Zaragoza', '', '', '', '', '', ''),
+  Asturias = c('Asturias','', '', '', '', '', '', '', ''),
+  Islas_Baleares = c('Islas Baleares','', '', '', '', '', '', '', ''),
+  Islas_Canarias = c('Las Palmas', 'Santa Cruz de Tenerife','', '', '', '', '', '', ''),
+  Cantabria = c('Cantabria','', '', '', '', '', '', '', ''),
+  Castilla_y_León = c('Ávila', 'Burgos', 'León', 'Palencia', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora'),
+  Castilla_La_Mancha = c('Albacete', 'Ciudad Real', 'Cuenca', 'Guadalajara', 'Toledo', '', '', '', ''),
+  Cataluña = c('Barcelona', 'Gerona', 'Lleida', 'Tarragona','', '', '', '', ''),
+  Comunidad_Valenciana = c('Alicante', 'Castellón', 'Valencia','', '', '', '', '', ''),
+  Extremadura = c('Badajoz', 'Cáceres','', '', '', '', '', '', ''),
+  Galicia = c('La Coruña', 'Lugo', 'Orense', 'Pontevedra', '', '', '', '', ''),
+  Comunidad_de_Madrid = c('Madrid','', '', '', '', '', '', '', ''),
+  Murcia = c('Murcia','', '', '', '', '', '', '', ''),
+  Navarra = c('Navarra','', '', '', '', '', '', '', ''),
+  País_Vasco = c('Álava', 'Vizcaya', 'Guipúzcoa', '', '', '', '', '', ''),
+  La_Rioja = c('La Rioja','', '', '', '', '', '', '', ''),
+  Ceuta = c('Ceuta','', '', '', '', '', '', '', ''),
+  Melilla = c('Melilla','', '', '', '', '', '', '', '')
 )
 
 ui = dashboardPage(

@@ -7,28 +7,28 @@
 if(!require("pacman")) install.packages("pacman")
 p_load(readxl, shiny, shinydashboard, shinydashboardPlus, shinyjs, shinyWidgets, 
        shinybusy, tidyverse, magrittr, janitor, lubridate, tidyr, httr, jsonlite, 
-       leaflet, geosphere, readxl)
+       leaflet, geosphere, readxl, data.table)
 
 DT <- data.table(
-  Andalucía = c('Almería', 'Cádiz', 'Córdoba', 'Granada', 'Huelva', 'Jaén', 'Málaga', 'Sevilla'),
-  Aragón = c('Huesca', 'Teruel', 'Zaragoza'),
-  Asturias = c('Asturias'),
-  Islas_Baleares = c('Islas Baleares'),
-  Islas_Canarias = c('Las Palmas', 'Santa Cruz de Tenerife'),
-  Cantabria = c('Cantabria'),
-  Castilla_y_León = c('granada', 'sevilla', 'cordoba', 'jaen'),
-  Castilla_La_Mancha = c('guada', 'albacete', 'cuenca', ''),
-  Cataluña = c('granada', 'sevilla', 'cordoba', 'jaen'),
-  Comunidad_Valenciana = c('guada', 'albacete', 'cuenca', ''),
-  Extremadura = c('granada', 'sevilla', 'cordoba', 'jaen'),
-  Galicia = c('guada', 'albacete', 'cuenca', ''),
-  Comunidad_de_Madrid = c('granada', 'sevilla', 'cordoba', 'jaen'),
-  Murcia = c('guada', 'albacete', 'cuenca', ''),
-  Navarra = c('granada', 'sevilla', 'cordoba', 'jaen'),
-  País_Vasco = c('guada', 'albacete', 'cuenca', ''),
-  La_Rioja = c('granada', 'sevilla', 'cordoba', 'jaen'),
-  Ceuta = c('guada', 'albacete', 'cuenca', ''),
-  Melilla = c('granada', 'sevilla', 'cordoba', 'jaen')
+  Andalucía = c('Almería', 'Cádiz', 'Córdoba', 'Granada', 'Huelva', 'Jaén', 'Málaga', 'Sevilla', ''),
+  Aragón = c('Huesca', 'Teruel', 'Zaragoza', '', '', '', '', '', ''),
+  Asturias = c('Asturias','', '', '', '', '', '', '', ''),
+  Islas_Baleares = c('Islas Baleares','', '', '', '', '', '', '', ''),
+  Islas_Canarias = c('Las Palmas', 'Santa Cruz de Tenerife','', '', '', '', '', '', ''),
+  Cantabria = c('Cantabria','', '', '', '', '', '', '', ''),
+  Castilla_y_León = c('Ávila', 'Burgos', 'León', 'Palencia', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora'),
+  Castilla_La_Mancha = c('Albacete', 'Ciudad Real', 'Cuenca', 'Guadalajara', 'Toledo', '', '', '', ''),
+  Cataluña = c('Barcelona', 'Gerona', 'Lleida', 'Tarragona','', '', '', '', ''),
+  Comunidad_Valenciana = c('Alicante', 'Castellón', 'Valencia','', '', '', '', '', ''),
+  Extremadura = c('Badajoz', 'Cáceres','', '', '', '', '', '', ''),
+  Galicia = c('La Coruña', 'Lugo', 'Orense', 'Pontevedra', '', '', '', '', ''),
+  Comunidad_de_Madrid = c('Madrid','', '', '', '', '', '', '', ''),
+  Murcia = c('Murcia','', '', '', '', '', '', '', ''),
+  Navarra = c('Navarra','', '', '', '', '', '', '', ''),
+  País_Vasco = c('Álava', 'Vizcaya', 'Guipúzcoa', '', '', '', '', '', ''),
+  La_Rioja = c('La Rioja','', '', '', '', '', '', '', ''),
+  Ceuta = c('Ceuta','', '', '', '', '', '', '', ''),
+  Melilla = c('Melilla','', '', '', '', '', '', '', '')
 )
 
 
@@ -71,10 +71,10 @@ shinyServer(function(input, output, session){
   no_low_cost <- c('REPSOL','CEPSA', 'GALP','SHELL','BP','PETRONOR','AVIA','Q8', 'CAMPSA','BONAREA')
   ds_low_cost <- ds_f %>% mutate(low_cost = !rotulo %in% no_low_cost)
   ds_low_cost2 <- ds_low_cost%>% mutate(ds_low_cost,ccaa = ifelse (idccaa=="01","ANDALUCIA",ifelse (idccaa=="02","ARAGON", ifelse (idccaa=="03","ASTURIAS", ifelse (idccaa=="04","BALEARES", 
-                                                                                                                                           ifelse (idccaa=="05","CANARIAS",ifelse (idccaa=="06","CANTABRIA", ifelse (idccaa=="07","CASTILLA Y LEON", 
-                                                                                                                                                                                                                     ifelse (idccaa=="08","CASTILLA - LA MANCHA", ifelse (idccaa=="09","CATALUÑA", ifelse (idccaa=="10","COMUNIDAD VALENCIANA",
-                                                                                                                                                                                                                                                                                                           ifelse (idccaa=="11","EXTREMADURA", ifelse (idccaa=="12","GALICIA", ifelse (idccaa=="13","MADRID", ifelse (idccaa=="14","MURCIA", ifelse (idccaa=="15","NAVARRA",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                     ifelse (idccaa=="16","PAIS VASCO", ifelse (idccaa=="17","LA RIOJA",ifelse (idccaa=="18","CEUTA",ifelse (idccaa=="19","MELILLA","NA"))))))))))))))))))))
+                                                           ifelse (idccaa=="05","CANARIAS",ifelse (idccaa=="06","CANTABRIA", ifelse (idccaa=="07","CASTILLA Y LEON", 
+                                                           ifelse (idccaa=="08","CASTILLA - LA MANCHA", ifelse (idccaa=="09","CATALUÑA", ifelse (idccaa=="10","COMUNIDAD VALENCIANA",
+                                                           ifelse (idccaa=="11","EXTREMADURA", ifelse (idccaa=="12","GALICIA", ifelse (idccaa=="13","MADRID", ifelse (idccaa=="14","MURCIA", ifelse (idccaa=="15","NAVARRA",
+                                                           ifelse (idccaa=="16","PAIS VASCO", ifelse (idccaa=="17","LA RIOJA",ifelse (idccaa=="18","CEUTA",ifelse (idccaa=="19","MELILLA","NA"))))))))))))))))))))
   
   # FRONT ------------------------------------------------------------
   
@@ -88,6 +88,7 @@ shinyServer(function(input, output, session){
     )
   }, ignoreInit = TRUE)
   
+  
   observeEvent(input$boton, {
     show_modal_spinner(
       spin = 'bounce',
@@ -99,57 +100,75 @@ shinyServer(function(input, output, session){
     
     
     # FILTROS DE DATOS ------------------------------------------------------------
+    output$comunidad = renderInfoBox({
+      valueBox (
+        value = input$CCAA,
+        subtitle = 'ccaa',
+        color = 'blue',
+        width = 12,
+        icon = icon("person")
+      )
+    })
+    output$provincia = renderInfoBox({
+      valueBox (
+        value = input$PROVINCIA,
+        subtitle = 'provincia',
+        color = 'blue',
+        width = 12,
+        icon = icon("person")
+      )
+    })
     
-    if (input$CCAA == 1){
-      output$comunidad = renderInfoBox({
-        valueBox (
-          value = 'ANDALUCÍA',
-          subtitle = 'ccaa',
-          color = 'blue',
-          width = 12,
-          icon = icon("person")
-        )
-      })
-      output$provincia = renderInfoBox({
-        valueBox (
-          value = input$pr,
-          subtitle = 'provincia',
-          color = 'blue',
-          width = 12,
-          icon = icon("person")
-        )
-      })
-    }
-    else if (input$CCAA == 2){
-      output$datos = renderInfoBox({
-        valueBox (
-          value = 1,
-          subtitle = 'holi',
-          color = 'blue',
-          width = 12
-        )
-      })
-    }
-    else if (input$CCAA == 3){
-      output$precios = renderInfoBox({
-        valueBox (
-          value = 1,
-          subtitle = 'datosss',
-          color = 'blue',
-          width = 12
-        )
-      })
-    }
-    else if (input$CCAA == 4){
-      output$precios = renderInfoBox({
-        valueBox (
-          value = 1,
-          subtitle = 'datosss',
-          color = 'blue',
-          width = 12
-        )
-      })
-    }
+    # if (input$CCAA == 'Andalucía'){
+    #   output$comunidad = renderInfoBox({
+    #     valueBox (
+    #       value = input$CCAA,
+    #       subtitle = 'ccaa',
+    #       color = 'blue',
+    #       width = 12,
+    #       icon = icon("person")
+    #     )
+    #   })
+    #   output$provincia = renderInfoBox({
+    #     valueBox (
+    #       value = input$PROVINCIA,
+    #       subtitle = 'provincia',
+    #       color = 'blue',
+    #       width = 12,
+    #       icon = icon("person")
+    #     )
+    #   })
+    # }
+    # else if (input$CCAA == 2){
+    #   output$datos = renderInfoBox({
+    #     valueBox (
+    #       value = 1,
+    #       subtitle = 'holi',
+    #       color = 'blue',
+    #       width = 12
+    #     )
+    #   })
+    # }
+    # else if (input$CCAA == 3){
+    #   output$precios = renderInfoBox({
+    #     valueBox (
+    #       value = 1,
+    #       subtitle = 'datosss',
+    #       color = 'blue',
+    #       width = 12
+    #     )
+    #   })
+    # }
+    # else if (input$CCAA == 4){
+    #   output$precios = renderInfoBox({
+    #     valueBox (
+    #       value = 1,
+    #       subtitle = 'datosss',
+    #       color = 'blue',
+    #       width = 12
+    #     )
+    #   })
+    # }
     # else if (output$value <- renderText({ input$caption }))
     
     output$rango = renderInfoBox({
@@ -172,17 +191,17 @@ shinyServer(function(input, output, session){
         write.csv(ds_low_cost2 %>% select(rotulo, municipio), fname)
       }
     )
-    pal <- colorFactor(palette = "YlGnBu", levels = ds_low_cost2$ccaa, reverse = TRUE)
+    #pal <- colorFactor(palette = "YlGnBu", levels = ds_low_cost2$ccaa, reverse = TRUE)
     
     
-    output$mymap <-renderLeaflet({
-      
-      leaflet(ds_low_cost2)%>% 
-        addTiles()%>%
-        addCircleMarkers(lng = ~ds_low_cost2$longitud_wgs84,lat = ~ds_low_cost2$latitud,radius = 1.2,color = ~pal(ccaa))%>% 
-        setView(lng = ~ds_low_cost2$longitud_wgs84,lat = ~ds_low_cost2$latitud,zoom=2)
-      
-    })
+    # output$mymap <-renderLeaflet({
+    #   
+    #   leaflet(ds_low_cost2)%>% 
+    #     addTiles()%>%
+    #     addCircleMarkers(lng = ~ds_low_cost2$longitud_wgs84,lat = ~ds_low_cost2$latitud,radius = 1.2,color = ~pal(ccaa))%>% 
+    #     setView(lng = ~ds_low_cost2$longitud_wgs84,lat = ~ds_low_cost2$latitud,zoom=2)
+    #   
+    # })
     
     #leafletProxy("mymap", data = ds_low_cost2) %>%
     #  addTiles() %>% 
