@@ -40,7 +40,9 @@ ui = dashboardPage(
   skin = 'blue', 
   #Cabecera
   dashboardHeader(
+    
     title = 'Gasolineras',
+    # titleWidth = 300,
     tags$li(class = "dropdown",
             tags$li(class = "dropdown", textOutput("logged_user"), style = "padding-top: 15px; padding-bottom: 15px; color: #fff;"),
             tags$li(class = "dropdown", actionLink("login", textOutput("logintext"))))
@@ -50,6 +52,11 @@ ui = dashboardPage(
   #Barra lateral
   dashboardSidebar(
     useShinyjs(),
+    # tags$style(HTML("
+    #   .main-sidebar{
+    #     width: 300px;
+    #   }
+    # ")),
     # column(10,
     #        fluidRow(
     #          fileInput(
@@ -166,7 +173,9 @@ ui = dashboardPage(
                         label = 'Seleccione el precio máximo del carburante',
                         min = 0, 
                         max = 3, 
-                        value = 1,8
+                        value = 1.9, 
+                        round = FALSE,
+                        step = 0.1
             )
           )
    ),
