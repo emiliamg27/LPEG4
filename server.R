@@ -78,6 +78,7 @@ shinyServer(function(input, output, session){
                                                            ifelse (idccaa=="11","EXTREMADURA", ifelse (idccaa=="12","GALICIA", ifelse (idccaa=="13","COMUNIDAD_DE_MADRID", ifelse (idccaa=="14","MURCIA", ifelse (idccaa=="15","NAVARRA",
                                                            ifelse (idccaa=="16","PAÍS_VASCO", ifelse (idccaa=="17","LA_RIOJA",ifelse (idccaa=="18","CEUTA",ifelse (idccaa=="19","MELILLA","NA"))))))))))))))))))))
   ds_low_cost2[is.na(ds_low_cost2)] <- 0
+  df_p <- filter(ds_low_cost2,provincia=='ALMERÍA' & precio_gasoleo_a!=0)
   
   # FRONT ------------------------------------------------------------
   
@@ -90,6 +91,7 @@ shinyServer(function(input, output, session){
       selected = 1
     )
   }, ignoreInit = TRUE)
+  
   
   
   observeEvent(input$boton, {
@@ -131,9 +133,19 @@ shinyServer(function(input, output, session){
       )
     })
     
-    df_provincia <- filter(ds_low_cost2,provincia==input$PROVINCIA & input$tipogasoleo!=0)
+    #Filtro provincia y precio
+    carb <- input$tipogasoleo
+    print(carb)
+    df_provincia <- filter(ds_low_cost2,provincia==input$PROVINCIA & input$tipogasoleo > input$precio)#NO FILTRA POR PRECIO
     
-    output$gas = renderDataTable(df_provincia %>% select(provincia,rotulo, municipio, input$tipogasoleo),
+    #Filtro de low_cost
+    if (input$lowcost==1){
+      df_lo <- filter(df_provincia,low_cost == TRUE)
+    }else if (input$lowcost!=1){
+      df_lo <- filter(df_provincia,low_cost == FALSE)
+    }
+    
+    output$gas = renderDataTable(df_lo %>% select(provincia,rotulo, municipio, input$tipogasoleo, low_cost),
                                  options = list(pageLength = 10, info = TRUE))
     
     output$descargar <- downloadHandler(
