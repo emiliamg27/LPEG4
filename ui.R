@@ -8,25 +8,32 @@ if(!require("pacman")) install.packages("pacman")
 p_load(shiny, shinydashboard, shinyjs, shinyWidgets, leaflet,leaflet.extras, data.table)
 
 DT <- data.table(
-  Andalucía = c('Almería', 'Cádiz', 'Córdoba', 'Granada', 'Huelva', 'Jaén', 'Málaga', 'Sevilla', ''),
-  Aragón = c('Huesca', 'Teruel', 'Zaragoza', '', '', '', '', '', ''),
-  Asturias = c('Asturias','', '', '', '', '', '', '', ''),
-  Islas_Baleares = c('Islas Baleares','', '', '', '', '', '', '', ''),
-  Islas_Canarias = c('Las Palmas', 'Santa Cruz de Tenerife','', '', '', '', '', '', ''),
-  Cantabria = c('Cantabria','', '', '', '', '', '', '', ''),
-  Castilla_y_León = c('Ávila', 'Burgos', 'León', 'Palencia', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora'),
-  Castilla_La_Mancha = c('Albacete', 'Ciudad Real', 'Cuenca', 'Guadalajara', 'Toledo', '', '', '', ''),
-  Cataluña = c('Barcelona', 'Gerona', 'Lleida', 'Tarragona','', '', '', '', ''),
-  Comunidad_Valenciana = c('Alicante', 'Castellón', 'Valencia','', '', '', '', '', ''),
-  Extremadura = c('Badajoz', 'Cáceres','', '', '', '', '', '', ''),
-  Galicia = c('La Coruña', 'Lugo', 'Orense', 'Pontevedra', '', '', '', '', ''),
-  Comunidad_de_Madrid = c('Madrid','', '', '', '', '', '', '', ''),
-  Murcia = c('Murcia','', '', '', '', '', '', '', ''),
-  Navarra = c('Navarra','', '', '', '', '', '', '', ''),
-  País_Vasco = c('Álava', 'Vizcaya', 'Guipúzcoa', '', '', '', '', '', ''),
-  La_Rioja = c('La Rioja','', '', '', '', '', '', '', ''),
-  Ceuta = c('Ceuta','', '', '', '', '', '', '', ''),
-  Melilla = c('Melilla','', '', '', '', '', '', '', '')
+  ANDALUCÍA = c('ALMERÍA', 'CÁDIZ', 'CÓRDOBA', 'GRANADA', 'HUELVA', 'JAÉN', 'MÁLAGA', 'SEVILLA', ''),
+  ARAGÓN = c('HUESCA', 'TERUEL', 'ZARAGOZA', '', '', '', '', '', ''),
+  ASTURIAS = c('ASTURIAS','', '', '', '', '', '', '', ''),
+  ISLAS_BALEARES = c('BALEARS (ILLES)','', '', '', '', '', '', '', ''),
+  CANARIAS = c('PALMAS (LAS)', 'SANTA CRUZ DE TENERIFE','', '', '', '', '', '', ''),
+  CANTABRIA = c('CANTABRIA','', '', '', '', '', '', '', ''),
+  CASTILLA_Y_LEÓN = c('ÁVILA', 'BURGOS', 'LEÓN', 'PALENCIA', 'SALAMANCA', 'SEGOVIA', 'SORIA', 'VALLADOLID', 'ZAMORA'),
+  CASTILLA_LA_MANCHA = c('ALBACETE', 'CIUDAD REAL', 'CUENCA', 'GUADALAJARA', 'TOLEDO', '', '', '', ''),
+  CATALUÑA = c('BARCELONA', 'GIRONA', 'LLEIDA', 'TARRAGONA','', '', '', '', ''),
+  COMUNIDAD_VALENCIANA = c('ALICANTE', 'CASTELLÓN / CASTELLÓ', 'VALENCIA / VALÈNCIA','', '', '', '', '', ''),
+  EXTREMADURA = c('BADAJOZ', 'CÁCERES','', '', '', '', '', '', ''),
+  GALICIA = c('CORUÑA (A)', 'LUGO', 'OURENSE', 'PONTEVEDRA', '', '', '', '', ''),
+  COMUNIDAD_DE_MADRID = c('MADRID','', '', '', '', '', '', '', ''),
+  MURCIA = c('MURCIA','', '', '', '', '', '', '', ''),
+  NAVARRA = c('NAVARRA','', '', '', '', '', '', '', ''),
+  PAÍS_VASCO = c('ARABA/ÁLAVA', 'BIZKAIA', 'GIPUZKOA', '', '', '', '', '', ''),
+  LA_RIOJA = c('RIOJA (LA)','', '', '', '', '', '', '', ''),
+  CEUTA = c('CEUTA','', '', '', '', '', '', '', ''),
+  MELILLA = c('MELILLA','', '', '', '', '', '', '', '')
+)
+combustible <- data.table(
+  precio_gasoleo_a = c(''),
+  precio_gasoleo_premium = c(''),
+  precio_gasolina_95_e5 = c(''),
+  precio_gasolina_98_e10 = c(''),
+  precio_gas_natural_licuado = c('')
 )
 
 ui = dashboardPage(
@@ -116,8 +123,8 @@ ui = dashboardPage(
            fluidRow(
              selectizeInput(
                inputId = "PROVINCIA",
-               label = "To period:",
-               choices = DT[['Andalucía']],
+               label = "Escoja la provincia",
+               choices = DT[['ANDALUCÍA']],
                selected = 2
              )
            )
@@ -148,17 +155,21 @@ ui = dashboardPage(
           fluidRow(
           selectInput ('tipogasoleo',
                        label = 'Seleccione un carburante',
-                      choices = list(
-                        'Precio Gasóleo A' = 1,
-                       'Precio Gasóleo Premium' = 2,
-                      'Precio Gasolina 95 e5' = 3,
-                     'Precio Gasolina 98 e5' = 4
-                  ),
-                 selected = 1
+                      choices = names(combustible),
+                      selected = 'precio_gasoleo_a'
                  )
           )
           ),
-    
+   column(10, 
+          fluidRow(
+            sliderInput('precio',
+                        label = 'Seleccione el precio máximo del carburante',
+                        min = 0, 
+                        max = 3, 
+                        value = 1,8
+            )
+          )
+   ),
     column(10,
            fluidRow(
              column(
@@ -173,7 +184,8 @@ ui = dashboardPage(
                align = 'center'
              )
            )
-    )
+           )
+   
   ),
   
   #Cuerpo

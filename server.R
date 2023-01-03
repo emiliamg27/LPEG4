@@ -10,26 +10,28 @@ p_load(readxl, shiny, shinydashboard, shinydashboardPlus, shinyjs, shinyWidgets,
        leaflet, geosphere, readxl, data.table)
 
 DT <- data.table(
-  Andalucía = c('Almería', 'Cádiz', 'Córdoba', 'Granada', 'Huelva', 'Jaén', 'Málaga', 'Sevilla', ''),
-  Aragón = c('Huesca', 'Teruel', 'Zaragoza', '', '', '', '', '', ''),
-  Asturias = c('Asturias','', '', '', '', '', '', '', ''),
-  Islas_Baleares = c('Islas Baleares','', '', '', '', '', '', '', ''),
-  Islas_Canarias = c('Las Palmas', 'Santa Cruz de Tenerife','', '', '', '', '', '', ''),
-  Cantabria = c('Cantabria','', '', '', '', '', '', '', ''),
-  Castilla_y_León = c('Ávila', 'Burgos', 'León', 'Palencia', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora'),
-  Castilla_La_Mancha = c('Albacete', 'Ciudad Real', 'Cuenca', 'Guadalajara', 'Toledo', '', '', '', ''),
-  Cataluña = c('Barcelona', 'Gerona', 'Lleida', 'Tarragona','', '', '', '', ''),
-  Comunidad_Valenciana = c('Alicante', 'Castellón', 'Valencia','', '', '', '', '', ''),
-  Extremadura = c('Badajoz', 'Cáceres','', '', '', '', '', '', ''),
-  Galicia = c('La Coruña', 'Lugo', 'Orense', 'Pontevedra', '', '', '', '', ''),
-  Comunidad_de_Madrid = c('Madrid','', '', '', '', '', '', '', ''),
-  Murcia = c('Murcia','', '', '', '', '', '', '', ''),
-  Navarra = c('Navarra','', '', '', '', '', '', '', ''),
-  País_Vasco = c('Álava', 'Vizcaya', 'Guipúzcoa', '', '', '', '', '', ''),
-  La_Rioja = c('La Rioja','', '', '', '', '', '', '', ''),
-  Ceuta = c('Ceuta','', '', '', '', '', '', '', ''),
-  Melilla = c('Melilla','', '', '', '', '', '', '', '')
+  ANDALUCÍA = c('ALMERÍA', 'CÁDIZ', 'CÓRDOBA', 'GRANADA', 'HUELVA', 'JAÉN', 'MÁLAGA', 'SEVILLA', ''),
+  ARAGÓN = c('HUESCA', 'TERUEL', 'ZARAGOZA', '', '', '', '', '', ''),
+  ASTURIAS = c('ASTURIAS','', '', '', '', '', '', '', ''),
+  ISLAS_BALEARES = c('BALEARS (ILLES)','', '', '', '', '', '', '', ''),
+  CANARIAS = c('PALMAS (LAS)', 'SANTA CRUZ DE TENERIFE','', '', '', '', '', '', ''),
+  CANTABRIA = c('CANTABRIA','', '', '', '', '', '', '', ''),
+  CASTILLA_Y_LEÓN = c('ÁVILA', 'BURGOS', 'LEÓN', 'PALENCIA', 'SALAMANCA', 'SEGOVIA', 'SORIA', 'VALLADOLID', 'ZAMORA'),
+  CASTILLA_LA_MANCHA = c('ALBACETE', 'CIUDAD REAL', 'CUENCA', 'GUADALAJARA', 'TOLEDO', '', '', '', ''),
+  CATALUÑA = c('BARCELONA', 'GIRONA', 'LLEIDA', 'TARRAGONA','', '', '', '', ''),
+  COMUNIDAD_VALENCIANA = c('ALICANTE', 'CASTELLÓN / CASTELLÓ', 'VALENCIA / VALÈNCIA','', '', '', '', '', ''),
+  EXTREMADURA = c('BADAJOZ', 'CÁCERES','', '', '', '', '', '', ''),
+  GALICIA = c('CORUÑA (A)', 'LUGO', 'OURENSE', 'PONTEVEDRA', '', '', '', '', ''),
+  COMUNIDAD_DE_MADRID = c('MADRID','', '', '', '', '', '', '', ''),
+  MURCIA = c('MURCIA','', '', '', '', '', '', '', ''),
+  NAVARRA = c('NAVARRA','', '', '', '', '', '', '', ''),
+  PAÍS_VASCO = c('ARABA/ÁLAVA', 'BIZKAIA', 'GIPUZKOA', '', '', '', '', '', ''),
+  LA_RIOJA = c('RIOJA (LA)','', '', '', '', '', '', '', ''),
+  CEUTA = c('CEUTA','', '', '', '', '', '', '', ''),
+  MELILLA = c('MELILLA','', '', '', '', '', '', '', '')
 )
+
+
 
 
 shinyServer(function(input, output, session){
@@ -70,12 +72,12 @@ shinyServer(function(input, output, session){
   ds_f %>% distinct(rotulo) 
   no_low_cost <- c('REPSOL','CEPSA', 'GALP','SHELL','BP','PETRONOR','AVIA','Q8', 'CAMPSA','BONAREA')
   ds_low_cost <- ds_f %>% mutate(low_cost = !rotulo %in% no_low_cost)
-  ds_low_cost2 <- ds_low_cost%>% mutate(ds_low_cost,ccaa = ifelse (idccaa=="01","ANDALUCIA",ifelse (idccaa=="02","ARAGON", ifelse (idccaa=="03","ASTURIAS", ifelse (idccaa=="04","BALEARES", 
-                                                           ifelse (idccaa=="05","CANARIAS",ifelse (idccaa=="06","CANTABRIA", ifelse (idccaa=="07","CASTILLA Y LEON", 
-                                                           ifelse (idccaa=="08","CASTILLA - LA MANCHA", ifelse (idccaa=="09","CATALUÑA", ifelse (idccaa=="10","COMUNIDAD VALENCIANA",
-                                                           ifelse (idccaa=="11","EXTREMADURA", ifelse (idccaa=="12","GALICIA", ifelse (idccaa=="13","MADRID", ifelse (idccaa=="14","MURCIA", ifelse (idccaa=="15","NAVARRA",
-                                                           ifelse (idccaa=="16","PAIS VASCO", ifelse (idccaa=="17","LA RIOJA",ifelse (idccaa=="18","CEUTA",ifelse (idccaa=="19","MELILLA","NA"))))))))))))))))))))
-  
+  ds_low_cost2 <- ds_low_cost%>% mutate(ds_low_cost,ccaa = ifelse (idccaa=="01","ANDALUCÍA",ifelse (idccaa=="02","ARAGÓN", ifelse (idccaa=="03","ASTURIAS", ifelse (idccaa=="04","ISLAS_BALEARES", 
+                                                           ifelse (idccaa=="05","CANARIAS",ifelse (idccaa=="06","CANTABRIA", ifelse (idccaa=="07","CASTILLA_Y_LEÓN", 
+                                                           ifelse (idccaa=="08","CASTILLA_LA_MANCHA", ifelse (idccaa=="09","CATALUÑA", ifelse (idccaa=="10","COMUNIDAD_VALENCIANA",
+                                                           ifelse (idccaa=="11","EXTREMADURA", ifelse (idccaa=="12","GALICIA", ifelse (idccaa=="13","COMUNIDAD_DE_MADRID", ifelse (idccaa=="14","MURCIA", ifelse (idccaa=="15","NAVARRA",
+                                                           ifelse (idccaa=="16","PAÍS_VASCO", ifelse (idccaa=="17","LA_RIOJA",ifelse (idccaa=="18","CEUTA",ifelse (idccaa=="19","MELILLA","NA"))))))))))))))))))))
+
   # FRONT ------------------------------------------------------------
   
   observeEvent(input$CCAA, {
@@ -118,62 +120,9 @@ shinyServer(function(input, output, session){
         icon = icon("person")
       )
     })
-    
-    # if (input$CCAA == 'Andalucía'){
-    #   output$comunidad = renderInfoBox({
-    #     valueBox (
-    #       value = input$CCAA,
-    #       subtitle = 'ccaa',
-    #       color = 'blue',
-    #       width = 12,
-    #       icon = icon("person")
-    #     )
-    #   })
-    #   output$provincia = renderInfoBox({
-    #     valueBox (
-    #       value = input$PROVINCIA,
-    #       subtitle = 'provincia',
-    #       color = 'blue',
-    #       width = 12,
-    #       icon = icon("person")
-    #     )
-    #   })
-    # }
-    # else if (input$CCAA == 2){
-    #   output$datos = renderInfoBox({
-    #     valueBox (
-    #       value = 1,
-    #       subtitle = 'holi',
-    #       color = 'blue',
-    #       width = 12
-    #     )
-    #   })
-    # }
-    # else if (input$CCAA == 3){
-    #   output$precios = renderInfoBox({
-    #     valueBox (
-    #       value = 1,
-    #       subtitle = 'datosss',
-    #       color = 'blue',
-    #       width = 12
-    #     )
-    #   })
-    # }
-    # else if (input$CCAA == 4){
-    #   output$precios = renderInfoBox({
-    #     valueBox (
-    #       value = 1,
-    #       subtitle = 'datosss',
-    #       color = 'blue',
-    #       width = 12
-    #     )
-    #   })
-    # }
-    # else if (output$value <- renderText({ input$caption }))
-    
     output$rango = renderInfoBox({
       valueBox (
-        value = input$pob,
+        value = input$precio,
         subtitle = 'población',
         color = 'blue',
         width = 12,
@@ -181,8 +130,9 @@ shinyServer(function(input, output, session){
       )
     })
     
+    df_provincia <- filter(ds_low_cost2,provincia==input$PROVINCIA)
     
-    output$gas = renderDataTable(ds_low_cost2 %>% select(rotulo, municipio),
+    output$gas = renderDataTable(df_provincia %>% select(provincia,rotulo, municipio),
                                  options = list(pageLength = 10, info = TRUE))
     
     output$descargar <- downloadHandler(
