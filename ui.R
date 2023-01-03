@@ -59,11 +59,11 @@ ui = dashboardPage(
                         )
                 )
            ),
-   # column(10,
-   #        fluidRow(
-   #          textInput(inputId = NULL, label = NULL , value = "", width = NULL, placeholder = "Escriba una provincia")
-   #        )
-   # ),
+    column(10,
+          fluidRow(
+            textInput(inputId = NULL, label = NULL , value = "", width = NULL, placeholder = "Escriba una provincia")
+          )
+          ),
     column(10, 
            fluidRow(
              sliderInput('pob',
@@ -71,10 +71,8 @@ ui = dashboardPage(
                          min = 0, 
                          max = 100, 
                          value = 50
-               
              )
            )
-      
     ),
     column(10,
            fluidRow(
@@ -87,20 +85,20 @@ ui = dashboardPage(
              )
            )
     ),
-   # column(12,
-   #        fluidRow(
-   #        selectInput ('tipogasoleo',
-   #                     label = 'Seleccione un carburante', 
-    #                    choices = list(
-    #                      'Precio Gasóleo A' = 1,
-     #                     'Precio Gasóleo Premium' = 2,
-      #                    'Precio Gasolina 95 e5' = 3,
-       #                   'Precio Gasolina 98 e5' = 4
-        #                ),
-         #               selected = 1
-          # )
-           #)
-           #),
+   column(10,
+          fluidRow(
+          selectInput ('tipogasoleo',
+                       label = 'Seleccione un carburante',
+                      choices = list(
+                        'Precio Gasóleo A' = 1,
+                       'Precio Gasóleo Premium' = 2,
+                      'Precio Gasolina 95 e5' = 3,
+                     'Precio Gasolina 98 e5' = 4
+                  ),
+                 selected = 1
+                 )
+          )
+          ),
     
     column(10,
            fluidRow(
@@ -127,10 +125,18 @@ ui = dashboardPage(
         fluidRow(
           box(width=12,
               leafletOutput(outputId = "mymap")),
-                 
+          )
+        ),
+      tabPanel(
+        'Dashboard', 
+        fluidRow(
+          box(width = 12,
+              title = 'Dashboard',
+              status = 'primary',
+              infoBoxOutput("rango", width = 3)
+          )
         )
       ),
-      
       tabPanel(
         'Estadísticas', 
         fluidRow(
@@ -141,20 +147,9 @@ ui = dashboardPage(
               downloadButton("descargar", "Descargar csv")
               )
           )
-      
-    ),
-   # tabPanel(
-   #   'Empresario', 
-   #   fluidRow(
-   #     box(width = 12,
-   #         title = 'Datos de interés',
-    #        status = 'primary',
-            #dataTableOutput('gas'),
-     #       downloadButton("descargar", "Descargar csv")
-    #    )
-     # )
-    #)
+        ),
+    
+      )
+    )
   )
-)
-)
 

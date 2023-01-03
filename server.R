@@ -47,7 +47,11 @@ shinyServer(function(input, output, session){
   ds_f %>% distinct(rotulo) 
   no_low_cost <- c('REPSOL','CEPSA', 'GALP','SHELL','BP','PETRONOR','AVIA','Q8', 'CAMPSA','BONAREA')
   ds_low_cost <- ds_f %>% mutate(low_cost = !rotulo %in% no_low_cost)
-  
+  ds_low_cost2 <- ds_low_cost%>% mutate(ds_low_cost,ccaa = ifelse (idccaa=="01","ANDALUCIA",ifelse (idccaa=="02","ARAGON", ifelse (idccaa=="03","ASTURIAS", ifelse (idccaa=="04","BALEARES", 
+                                                                                                                                           ifelse (idccaa=="05","CANARIAS",ifelse (idccaa=="06","CANTABRIA", ifelse (idccaa=="07","CASTILLA Y LEON", 
+                                                                                                                                                                                                                     ifelse (idccaa=="08","CASTILLA - LA MANCHA", ifelse (idccaa=="09","CATALUÑA", ifelse (idccaa=="10","COMUNIDAD VALENCIANA",
+                                                                                                                                                                                                                                                                                                           ifelse (idccaa=="11","EXTREMADURA", ifelse (idccaa=="12","GALICIA", ifelse (idccaa=="13","MADRID", ifelse (idccaa=="14","MURCIA", ifelse (idccaa=="15","NAVARRA",
+                                                                                                                                                                                                                                                                                                                                                                                                                                                     ifelse (idccaa=="16","PAIS VASCO", ifelse (idccaa=="17","LA RIOJA",ifelse (idccaa=="18","CEUTA",ifelse (idccaa=="19","MELILLA","NA"))))))))))))))))))))
   
   # FRONT ------------------------------------------------------------
   
@@ -59,7 +63,9 @@ shinyServer(function(input, output, session){
     )
     Sys.sleep(2)
     remove_modal_spinner()
-  
+    
+    # FILTROS DE DATOS ------------------------------------------------------------
+    
     if (input$CCAA == 1){
       output$datos = renderInfoBox({
         valueBox (
@@ -105,38 +111,39 @@ shinyServer(function(input, output, session){
     output$rango = renderInfoBox({
       valueBox (
         value = input$pob,
-        subtitle = 'poblacion',
+        subtitle = 'población',
         color = 'blue',
-        width = 12
+        width = 12,
+        icon = icon("person")
       )
     })
     
     
-    output$gas = renderDataTable(ds_low_cost %>% select(rotulo, municipio),
+    output$gas = renderDataTable(ds_low_cost2 %>% select(rotulo, municipio),
                                  options = list(pageLength = 10, info = TRUE))
     
     output$descargar <- downloadHandler(
       filename = function(){"thename.csv"}, 
       content = function(fname){
-        write.csv(ds_low_cost %>% select(rotulo, municipio), fname)
+        write.csv(ds_low_cost2 %>% select(rotulo, municipio), fname)
       }
     )
-    pal <- colorFactor(palette = "YlGnBu", levels = ds_low_cost$ccaa, reverse = TRUE)
+    pal <- colorFactor(palette = "YlGnBu", levels = ds_low_cost2$ccaa, reverse = TRUE)
     
     
     output$mymap <-renderLeaflet({
       
-      leaflet(data = ds_low_cost)%>% 
+      leaflet(ds_low_cost2)%>% 
         addTiles()%>%
-        addCircleMarkers(lng = ~ds_low_cost$longitud_wgs84,lat = ~ds_low_cost$latitud,radius = 1.2,color = ~pal(ccaa))%>% 
-        setView(lng = ~ds_low_cost$longitud_wgs84,lat = ~ds_low_cost$latitud,zoom=2)
+        addCircleMarkers(lng = ~ds_low_cost2$longitud_wgs84,lat = ~ds_low_cost2$latitud,radius = 1.2,color = ~pal(ccaa))%>% 
+        setView(lng = ~ds_low_cost2$longitud_wgs84,lat = ~ds_low_cost2$latitud,zoom=2)
       
     })
     
-    #leafletProxy("mymap", data = ds_low_cost) %>%
+    #leafletProxy("mymap", data = ds_low_cost2) %>%
     #  addTiles() %>% 
     #  clearShapes() %>% 
-    #  addPolygons(data = ds_low_cost, fillColor = ~pal(ccaa), fillOpacity = 0.7, weight = 2)  
+    #  addPolygons(data = ds_low_cost2, fillColor = ~pal(ccaa), fillOpacity = 0.7, weight = 2)  
   })
 })
   
