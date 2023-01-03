@@ -9,6 +9,29 @@ p_load(readxl, shiny, shinydashboard, shinydashboardPlus, shinyjs, shinyWidgets,
        shinybusy, tidyverse, magrittr, janitor, lubridate, tidyr, httr, jsonlite, 
        leaflet, geosphere, readxl)
 
+DT <- data.table(
+  Andalucía = c('Almería', 'Cádiz', 'Córdoba', 'Granada', 'Huelva', 'Jaén', 'Málaga', 'Sevilla'),
+  Aragón = c('Huesca', 'Teruel', 'Zaragoza'),
+  Asturias = c('Asturias'),
+  Islas_Baleares = c('Islas Baleares'),
+  Islas_Canarias = c('Las Palmas', 'Santa Cruz de Tenerife'),
+  Cantabria = c('Cantabria'),
+  Castilla_y_León = c('granada', 'sevilla', 'cordoba', 'jaen'),
+  Castilla_La_Mancha = c('guada', 'albacete', 'cuenca', ''),
+  Cataluña = c('granada', 'sevilla', 'cordoba', 'jaen'),
+  Comunidad_Valenciana = c('guada', 'albacete', 'cuenca', ''),
+  Extremadura = c('granada', 'sevilla', 'cordoba', 'jaen'),
+  Galicia = c('guada', 'albacete', 'cuenca', ''),
+  Comunidad_de_Madrid = c('granada', 'sevilla', 'cordoba', 'jaen'),
+  Murcia = c('guada', 'albacete', 'cuenca', ''),
+  Navarra = c('granada', 'sevilla', 'cordoba', 'jaen'),
+  País_Vasco = c('guada', 'albacete', 'cuenca', ''),
+  La_Rioja = c('granada', 'sevilla', 'cordoba', 'jaen'),
+  Ceuta = c('guada', 'albacete', 'cuenca', ''),
+  Melilla = c('granada', 'sevilla', 'cordoba', 'jaen')
+)
+
+
 shinyServer(function(input, output, session){
   
   logged_in <- reactiveVal(FALSE)
@@ -55,6 +78,16 @@ shinyServer(function(input, output, session){
   
   # FRONT ------------------------------------------------------------
   
+  observeEvent(input$CCAA, {
+    freezeReactiveValue(input, "PROVINCIA")
+    updateSelectizeInput(
+      session,
+      inputId = "PROVINCIA",
+      choices = DT[[input$CCAA]],
+      selected = 1
+    )
+  }, ignoreInit = TRUE)
+  
   observeEvent(input$boton, {
     show_modal_spinner(
       spin = 'bounce',
@@ -64,19 +97,30 @@ shinyServer(function(input, output, session){
     Sys.sleep(2)
     remove_modal_spinner()
     
+    
     # FILTROS DE DATOS ------------------------------------------------------------
     
     if (input$CCAA == 1){
-      output$datos = renderInfoBox({
+      output$comunidad = renderInfoBox({
         valueBox (
-          value = 1,
-          subtitle = 'datosss',
+          value = 'ANDALUCÍA',
+          subtitle = 'ccaa',
           color = 'blue',
-          width = 12
+          width = 12,
+          icon = icon("person")
+        )
+      })
+      output$provincia = renderInfoBox({
+        valueBox (
+          value = input$pr,
+          subtitle = 'provincia',
+          color = 'blue',
+          width = 12,
+          icon = icon("person")
         )
       })
     }
-    else if (input$CCAA != 1){
+    else if (input$CCAA == 2){
       output$datos = renderInfoBox({
         valueBox (
           value = 1,
@@ -86,7 +130,7 @@ shinyServer(function(input, output, session){
         )
       })
     }
-    else if (input$precio_gasoleo_a == 1){
+    else if (input$CCAA == 3){
       output$precios = renderInfoBox({
         valueBox (
           value = 1,
@@ -96,7 +140,7 @@ shinyServer(function(input, output, session){
         )
       })
     }
-    else if (input$precio_gasoleo_a != 1){
+    else if (input$CCAA == 4){
       output$precios = renderInfoBox({
         valueBox (
           value = 1,
