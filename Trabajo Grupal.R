@@ -27,8 +27,9 @@ str_squish(df1$rotulo)
 df2 <- df1 %>% mutate(lowcost =! rotulo %in% c("CEPSA", "REPSOL", "BP", "SHELL"))
 
 #Filtrado por 24 h
-#df2 %>% count(horario, sort = TRUE)
-#no_24h <- df2 %>% filter(horario == 'L-D: 24H') %>% select(!horario) %>% view()
+
+df2 %>% count(horario, sort = TRUE)%>% view()
+no_24h <- df2  %>% mutate('24H' = horario %in% 'L-D: 24H') %>% view()
 
 ##Columna nombre ccaa
 df3 <- df2%>% mutate(df2,ccaa = ifelse (idccaa=="01","ANDALUCIA",ifelse (idccaa=="02","ARAGON", ifelse (idccaa=="03","ASTURIAS", ifelse (idccaa=="04","BALEARES", 
