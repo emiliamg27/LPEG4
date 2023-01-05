@@ -158,7 +158,7 @@ shinyServer(function(input, output, session){
     }
     
     carb <- input$tipogasoleo
-    df_precio <- subset(df_lo, precio_gasoleo_a < input$precio & precio_gasoleo_a > 0 )
+    df_precio <- subset(df_24, precio_gasoleo_a < input$precio & precio_gasoleo_a > 0 )
     
     output$gas = renderDataTable(df_precio %>% select(provincia,rotulo, municipio, input$tipogasoleo, low_cost, si_24H, horario, autoservicio),
                                  options = list(pageLength = 10, info = TRUE))
