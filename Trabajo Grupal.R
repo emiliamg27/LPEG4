@@ -66,9 +66,11 @@ library(readxl)
 tipo_servicio <- read_excel("preciosEESS_es.xls", skip = 3)
 columnaserv<-select(tipo_servicio, direccion, Tipo_servicio)
 df_servicio <-merge(x = df_pob_d, y = columnaserv, by=c("direccion"), all.x = TRUE)
+df_servicio_personal<-df_servicio %>% mutate(autoservicio = str_detect(Tipo_servicio,pattern = "(A)")) %>%view()
+
 #Añadimos distancia
 p_load(tidyverse, janitor, jsonlite, leaflet, geosphere, mapsapi,xml2,mapsapi)
-distancias<-df_servicio %>% select(latitud,longitud_wgs84, rotulo,direccion)
+distancias<-df_servicio_personal %>% select(latitud,longitud_wgs84, rotulo,direccion)
 
 
 
@@ -80,7 +82,7 @@ uem <- c(-3.919257897378161, 40.373942679873714)
 distancias_villa <- distancias %>%select(longitud_wgs84,latitud) %>% distGeo(uem)
 
 
-df_distancias<-df_servicio%>%  mutate(distancias = round(distancias_villa/1000, digits = 2)) %>% view()
+df_distancias<-df_servicio_personal%>%  mutate(distancias = round(distancias_villa/1000, digits = 2)) %>% view()
 
 # READING AND WRITING (FILES) ---------------------------------------------
 
