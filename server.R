@@ -70,6 +70,7 @@ shinyServer(function(input, output, session){
   ds_f <- ds_raw %>% clean_names() %>% type_convert(locale = locale(decimal_mark = ",")) %>% as_tibble()
   ds_f %>% count(rotulo) 
   ds_f %>% distinct(rotulo) 
+  #Diferenciamos por lowcost
   no_low_cost <- c('REPSOL','CEPSA', 'GALP','SHELL','BP','PETRONOR','AVIA','Q8', 'CAMPSA','BONAREA')
   ds_low_cost <- ds_f %>% mutate(low_cost = !rotulo %in% no_low_cost)
   ds_low_cost2 <- ds_low_cost%>% mutate(ds_low_cost,ccaa = ifelse (idccaa=="01","ANDALUCÍA",ifelse (idccaa=="02","ARAGÓN", ifelse (idccaa=="03","ASTURIAS", ifelse (idccaa=="04","ISLAS_BALEARES", 
@@ -78,7 +79,16 @@ shinyServer(function(input, output, session){
                                                            ifelse (idccaa=="11","EXTREMADURA", ifelse (idccaa=="12","GALICIA", ifelse (idccaa=="13","COMUNIDAD_DE_MADRID", ifelse (idccaa=="14","MURCIA", ifelse (idccaa=="15","NAVARRA",
                                                            ifelse (idccaa=="16","PAÍS_VASCO", ifelse (idccaa=="17","LA_RIOJA",ifelse (idccaa=="18","CEUTA",ifelse (idccaa=="19","MELILLA","NA"))))))))))))))))))))
   ds_low_cost2[is.na(ds_low_cost2)] <- 0
-  df_p <- filter(ds_low_cost2,provincia=='ALMERÍA' & precio_gasoleo_a!=0)
+  
+  #Diferenciamos por 24h
+  no_24h <- ds_low_cost2  %>% mutate('si_24H' = horario %in% 'L-D: 24H')
+  
+  #Diferenciamos por autoservicio
+  tipo_servicio <- read_excel("preciosEESS_es.xls", skip = 3)
+  columnaserv <- select(tipo_servicio, direccion, Tipo_servicio)
+  df_servicio <- merge(x = no_24h, y = columnaserv, by=c("direccion"), all.x = TRUE)
+  df_autoserv <- df_servicio %>% mutate(autoservicio = str_detect(Tipo_servicio,pattern = "(A)"))
+  
   
   # FRONT ------------------------------------------------------------
   
@@ -135,8 +145,7 @@ shinyServer(function(input, output, session){
     
     #Filtro provincia y precio
     carb <- input$tipogasoleo
-    print(carb)
-    df_provincia <- filter(ds_low_cost2,provincia==input$PROVINCIA & input$tipogasoleo > input$precio)#NO FILTRA POR PRECIO
+    df_provincia <- filter(df_autoserv,provincia==input$PROVINCIA & input$tipogasoleo > input$precio)#NO FILTRA POR PRECIO
     
     #Filtro de low_cost
     if (input$lowcost==1){
@@ -145,7 +154,14 @@ shinyServer(function(input, output, session){
       df_lo <- filter(df_provincia,low_cost == FALSE)
     }
     
-    output$gas = renderDataTable(df_lo %>% select(provincia,rotulo, municipio, input$tipogasoleo, low_cost),
+    #Filtro de 24_h
+    if (input$si_24_h==1){
+      df_24 <- filter(df_lo,si_24H == TRUE)
+    }else if (input$si_24_h!=1){
+      df_24 <- filter(df_lo,si_24H == FALSE)
+    }
+    
+    output$gas = renderDataTable(df_24 %>% select(provincia,rotulo, municipio, input$tipogasoleo, low_cost, si_24H, horario, autoservicio),
                                  options = list(pageLength = 10, info = TRUE))
     
     output$descargar <- downloadHandler(

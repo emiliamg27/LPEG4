@@ -116,7 +116,7 @@ ui = dashboardPage(
     #         textInput(inputId = 'pr', label = NULL , value = "", width = NULL, placeholder = "Escriba una provincia")
     #       )
     #       ),
-    column(10,
+    column(12,
            fluidRow(
              selectizeInput(
                inputId = "CCAA",
@@ -126,7 +126,7 @@ ui = dashboardPage(
                )
              )
     ),
-    column(10,
+    column(12,
            fluidRow(
              selectizeInput(
                inputId = "PROVINCIA",
@@ -137,17 +137,40 @@ ui = dashboardPage(
            )
     ),
     
-    column(10, 
+    column(12,
            fluidRow(
-             sliderInput('pob',
-                         label = 'Seleccione el rango de población',
-                         min = 0, 
-                         max = 100, 
-                         value = 50
+             selectInput ('tipogasoleo',
+                          label = 'Seleccione un carburante',
+                          choices = names(combustible),
+                          selected = 'precio_gasoleo_a'
              )
            )
-           ),
-    column(10,
+    ),
+    
+    column(12, 
+           fluidRow(
+             sliderInput('precio',
+                         label = 'Seleccione el precio máximo del carburante',
+                         min = 0, 
+                         max = 3, 
+                         value = 1.9, 
+                         round = FALSE,
+                         step = 0.1
+             )
+           )
+    ),
+    
+    # column(12, 
+    #        fluidRow(
+    #          sliderInput('pob',
+    #                      label = 'Seleccione el rango de población',
+    #                      min = 0, 
+    #                      max = 100, 
+    #                      value = 50
+    #          )
+    #        )
+    #        ),
+    column(12,
            fluidRow(
              radioButtons('lowcost',
                           label = '¿Quiere una gasolinera LowCost?',
@@ -158,28 +181,20 @@ ui = dashboardPage(
              )
            )
     ),
-   column(10,
-          fluidRow(
-          selectInput ('tipogasoleo',
-                       label = 'Seleccione un carburante',
-                      choices = names(combustible),
-                      selected = 'precio_gasoleo_a'
-                 )
-          )
-          ),
-   column(10, 
-          fluidRow(
-            sliderInput('precio',
-                        label = 'Seleccione el precio máximo del carburante',
-                        min = 0, 
-                        max = 3, 
-                        value = 1.9, 
-                        round = FALSE,
-                        step = 0.1
-            )
-          )
-   ),
-    column(10,
+    
+    column(12,
+           fluidRow(
+             radioButtons('si_24_h',
+                          label = '¿Quiere una gasolinera 24H?',
+                          choices = list(
+                            'Si' = 1,
+                            'No' = 2
+                          )
+             )
+           )
+    ),
+   
+    column(12,
            fluidRow(
              column(
                width = 10,
