@@ -31,9 +31,6 @@ DT <- data.table(
   MELILLA = c('MELILLA','', '', '', '', '', '', '', '')
 )
 
-
-
-
 shinyServer(function(input, output, session){
   
   logged_in <- reactiveVal(FALSE)
@@ -55,13 +52,6 @@ shinyServer(function(input, output, session){
     return("")
   })
   
-  
-  # file = reactive({
-  #   fichero <- input$fichero
-  #   df <- read_excel(paste(fichero$datapath, '.xlsx'))
-  #   df
-  # })
-  
   # CARGA DE DATOS ------------------------------------------------------------
   
   url_='https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/' 
@@ -70,9 +60,16 @@ shinyServer(function(input, output, session){
   ds_f <- ds_raw %>% clean_names() %>% type_convert(locale = locale(decimal_mark = ",")) %>% as_tibble()
   ds_f %>% count(rotulo) 
   ds_f %>% distinct(rotulo) 
+  
+  #Eliminamos columnas innecesarias
+  borrar <- c('precio_biodiesel','precio_bioetanol','precio_gas_natural_comprimido','precio_gas_natural_licuado',
+              'precio_gases_licuados_del_petroleo','precio_gasoleo_b','precio_gasolina_95_e10','precio_gasolina_95_e5_premium',
+              'precio_gasolina_98_e10','precio_hidrogeno')
+  datos <- ds_f[ , !(names(ds_f) %in% borrar)]
+  
   #Diferenciamos por lowcost
   no_low_cost <- c('REPSOL','CEPSA', 'GALP','SHELL','BP','PETRONOR','AVIA','Q8', 'CAMPSA','BONAREA')
-  ds_low_cost <- ds_f %>% mutate(low_cost = !rotulo %in% no_low_cost)
+  ds_low_cost <- datos %>% mutate(low_cost = !rotulo %in% no_low_cost)
   ds_low_cost2 <- ds_low_cost%>% mutate(ds_low_cost,ccaa = ifelse (idccaa=="01","ANDALUCÍA",ifelse (idccaa=="02","ARAGÓN", ifelse (idccaa=="03","ASTURIAS", ifelse (idccaa=="04","ISLAS_BALEARES", 
                                                            ifelse (idccaa=="05","CANARIAS",ifelse (idccaa=="06","CANTABRIA", ifelse (idccaa=="07","CASTILLA_Y_LEÓN", 
                                                            ifelse (idccaa=="08","CASTILLA_LA_MANCHA", ifelse (idccaa=="09","CATALUÑA", ifelse (idccaa=="10","COMUNIDAD_VALENCIANA",
@@ -143,9 +140,8 @@ shinyServer(function(input, output, session){
       )
     })
     
-    #Filtro provincia y precio
-    carb <- input$tipogasoleo
-    df_provincia <- filter(df_autoserv,provincia==input$PROVINCIA & input$tipogasoleo > input$precio)#NO FILTRA POR PRECIO
+    #Filtro provincia
+    df_provincia <- filter(df_autoserv,provincia==input$PROVINCIA)
     
     #Filtro de low_cost
     if (input$lowcost==1){
@@ -161,7 +157,10 @@ shinyServer(function(input, output, session){
       df_24 <- filter(df_lo,si_24H == FALSE)
     }
     
-    output$gas = renderDataTable(df_24 %>% select(provincia,rotulo, municipio, input$tipogasoleo, low_cost, si_24H, horario, autoservicio),
+    carb <- input$tipogasoleo
+    df_precio <- subset(df_lo, precio_gasoleo_a < input$precio & precio_gasoleo_a > 0 )
+    
+    output$gas = renderDataTable(df_precio %>% select(provincia,rotulo, municipio, input$tipogasoleo, low_cost, si_24H, horario, autoservicio),
                                  options = list(pageLength = 10, info = TRUE))
     
     output$descargar <- downloadHandler(

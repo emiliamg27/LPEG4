@@ -32,8 +32,7 @@ combustible <- data.table(
   precio_gasoleo_a = c(''),
   precio_gasoleo_premium = c(''),
   precio_gasolina_95_e5 = c(''),
-  precio_gasolina_98_e10 = c(''),
-  precio_gas_natural_licuado = c('')
+  precio_gasolina_98_e5 = c('')
 )
 
 ui = dashboardPage(
