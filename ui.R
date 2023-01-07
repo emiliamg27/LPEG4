@@ -4,8 +4,11 @@
 ## PROFESOR: CHRISTIAN SUCUZHANAY AREVALO
 
 # LOADING LIBS ------------------------------------------------------------
+
 if(!require("pacman")) install.packages("pacman")
 p_load(shiny, shinydashboard, shinyjs, shinyWidgets, leaflet,leaflet.extras, data.table)
+
+# DICCIONARIOS PARA LOS FILTROS -------------------------------------------
 
 DT <- data.table(
   ANDALUCÍA = c('ALMERÍA', 'CÁDIZ', 'CÓRDOBA', 'GRANADA', 'HUELVA', 'JAÉN', 'MÁLAGA', 'SEVILLA', ''),
@@ -35,11 +38,14 @@ combustible <- data.table(
   precio_gasolina_98_e5 = c('')
 )
 
+# COMIENZA SHINY UI -------------------------------------------
+
 ui = dashboardPage(
-  skin = 'blue', 
-  #Cabecera
+  skin = 'blue',
+  
+  # CABECERA ----------------------------------------------------------------
+  
   dashboardHeader(
-    
     title = 'Gasolineras',
     # titleWidth = 300,
     tags$li(class = "dropdown",
@@ -47,8 +53,9 @@ ui = dashboardPage(
             tags$li(class = "dropdown", actionLink("login", textOutput("logintext"))))
   ),
   
-  # Barra lateral  ------------------------------------------------------------
-  #Barra lateral
+
+  # BARRA LATERAL -----------------------------------------------------------
+
   dashboardSidebar(
     useShinyjs(),
     # tags$style(HTML("
@@ -57,64 +64,12 @@ ui = dashboardPage(
     #   }
     # ")),
     # column(10,
-    #        fluidRow(
-    #          fileInput(
-    #            'fichero',
-    #            label = 'Agregar fichero',
-    #            accept = c('.xls')
-    #          )
-    #        )
-    #        ),
-    # column(10,
-    #        fluidRow(
-    #          selectInput('CCAA',
-    #                      label = 'Seleccione una CCAA',
-    #                      choices = list(
-    #                        'Andalucía' = 1,
-    #                        'Aragón' = 2,
-    #                        'Asturias' = 3,
-    #                        'Islas Baleares' = 4,
-    #                        'Canarias' = 5,
-    #                        'Cantabria' = 6,
-    #                        'Castilla y León' = 7,
-    #                        'Castilla - La Mancha' = 8,
-    #                        'Cataluña' = 9,
-    #                        'Comunidad Valenciana' = 10,
-    #                        'Extremadura' = 11,
-    #                        'Galicia' = 12,
-    #                        'Comunidad de Madrid' = 13,
-    #                        'Murcia' = 14,
-    #                        'Navarra' = 15,
-    #                        'País Vasco' = 16,
-    #                        'La Rioja' = 17,
-    #                        'Ceuta' = 18,
-    #                        'Melilla' = 19
-    #                      ),
-    #                      selected = 1
-    #                     )
-    #             )
-    #        ),
-    # column(10, 
-    #        fluidRow(
-    #          selectInput('provi', 
-    #                      label = 'Seleccione una Provincia', 
-    #                      choices = list(
-    #                        'Granada' = 1,
-    #                        'Guadalajara' = 2,
-    #                        'Valencia' = 3,
-    #                        'Soria' = 4,
-    #                        'Barcelona' = 5,
-    #                        'A Coruña' = 6
-    #                      ),
-    #                      selected = 1
-    #          )
-    #        )
-    # ),
-    # column(10,
     #       fluidRow(
     #         textInput(inputId = 'pr', label = NULL , value = "", width = NULL, placeholder = "Escriba una provincia")
     #       )
     #       ),
+    
+    #Filtro CCAA
     column(12,
            fluidRow(
              selectizeInput(
@@ -125,6 +80,7 @@ ui = dashboardPage(
                )
              )
     ),
+    #Filtro provincia
     column(12,
            fluidRow(
              selectizeInput(
@@ -135,7 +91,7 @@ ui = dashboardPage(
              )
            )
     ),
-    
+    #Filtro carburante
     column(12,
            fluidRow(
              selectInput ('tipogasoleo',
@@ -145,7 +101,7 @@ ui = dashboardPage(
              )
            )
     ),
-    
+    #Filtro precio
     column(12, 
            fluidRow(
              sliderInput('precio',
@@ -169,6 +125,8 @@ ui = dashboardPage(
     #          )
     #        )
     #        ),
+    
+    #Filtro lowcost
     column(12,
            fluidRow(
              radioButtons('lowcost',
@@ -180,7 +138,7 @@ ui = dashboardPage(
              )
            )
     ),
-    
+    #Filtro 24h
     column(12,
            fluidRow(
              radioButtons('si_24_h',
@@ -192,7 +150,7 @@ ui = dashboardPage(
              )
            )
     ),
-   
+    #Botón
     column(12,
            fluidRow(
              column(
@@ -208,12 +166,15 @@ ui = dashboardPage(
              )
            )
            )
-   
-  ),
+    ),
   
-  #Cuerpo
+
+# CUERPO ------------------------------------------------------------------
+
   dashboardBody(
+    #Tabs
     tabsetPanel(
+      #Tab principal: Mapa
       tabPanel(
         'Mapa', 
         fluidRow(
@@ -221,6 +182,7 @@ ui = dashboardPage(
               leafletOutput(outputId = "mymap")),
           )
         ),
+      #Tab Dashboard
       tabPanel(
         'Dashboard', 
         fluidRow(
@@ -233,6 +195,7 @@ ui = dashboardPage(
           )
         )
       ),
+      #Tab estadísticas
       tabPanel(
         'Estadísticas', 
         fluidRow(
@@ -244,7 +207,6 @@ ui = dashboardPage(
               )
           )
         ),
-    
       )
     )
   )

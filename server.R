@@ -3,11 +3,15 @@
 ## LENGUAJES DE PROGRAMACIÓN ESTADÍSTICA
 ## PROFESOR: CHRISTIAN SUCUZHANAY AREVALO
 
-# LOADING LIBS ------------------------------------------------------------
+# CARGA DE LIBRERÍAS ------------------------------------------------------------
+
 if(!require("pacman")) install.packages("pacman")
 p_load(readxl, shiny, shinydashboard, shinydashboardPlus, shinyjs, shinyWidgets, 
        shinybusy, tidyverse, magrittr, janitor, lubridate, tidyr, httr, jsonlite, 
        leaflet, geosphere, readxl, data.table)
+
+
+# DICCIONARIOS PARA LOS FILTROS -------------------------------------------
 
 DT <- data.table(
   ANDALUCÍA = c('ALMERÍA', 'CÁDIZ', 'CÓRDOBA', 'GRANADA', 'HUELVA', 'JAÉN', 'MÁLAGA', 'SEVILLA', ''),
@@ -31,7 +35,14 @@ DT <- data.table(
   MELILLA = c('MELILLA','', '', '', '', '', '', '', '')
 )
 
+
+
+# COMIENZO SHINY SERVER ----------------------------------------------------------
+
 shinyServer(function(input, output, session){
+  
+
+  # LOG IN ------------------------------------------------------------------
   
   logged_in <- reactiveVal(FALSE)
   
@@ -61,7 +72,10 @@ shinyServer(function(input, output, session){
   ds_f %>% count(rotulo) 
   ds_f %>% distinct(rotulo) 
   
-  #Eliminamos columnas innecesarias
+
+  # LIMPIEZA DE DATOS -------------------------------------------------------
+
+  #Eliminamos columnas innecesarias (carburantes poco comunes)
   borrar <- c('precio_biodiesel','precio_bioetanol','precio_gas_natural_comprimido','precio_gas_natural_licuado',
               'precio_gases_licuados_del_petroleo','precio_gasoleo_b','precio_gasolina_95_e10','precio_gasolina_95_e5_premium',
               'precio_gasolina_98_e10','precio_hidrogeno')
@@ -70,11 +84,15 @@ shinyServer(function(input, output, session){
   #Diferenciamos por lowcost
   no_low_cost <- c('REPSOL','CEPSA', 'GALP','SHELL','BP','PETRONOR','AVIA','Q8', 'CAMPSA','BONAREA')
   ds_low_cost <- datos %>% mutate(low_cost = !rotulo %in% no_low_cost)
+  
+  #Creamos columna con el nombre de las CCAA
   ds_low_cost2 <- ds_low_cost%>% mutate(ds_low_cost,ccaa = ifelse (idccaa=="01","ANDALUCÍA",ifelse (idccaa=="02","ARAGÓN", ifelse (idccaa=="03","ASTURIAS", ifelse (idccaa=="04","ISLAS_BALEARES", 
                                                            ifelse (idccaa=="05","CANARIAS",ifelse (idccaa=="06","CANTABRIA", ifelse (idccaa=="07","CASTILLA_Y_LEÓN", 
                                                            ifelse (idccaa=="08","CASTILLA_LA_MANCHA", ifelse (idccaa=="09","CATALUÑA", ifelse (idccaa=="10","COMUNIDAD_VALENCIANA",
                                                            ifelse (idccaa=="11","EXTREMADURA", ifelse (idccaa=="12","GALICIA", ifelse (idccaa=="13","COMUNIDAD_DE_MADRID", ifelse (idccaa=="14","MURCIA", ifelse (idccaa=="15","NAVARRA",
                                                            ifelse (idccaa=="16","PAÍS_VASCO", ifelse (idccaa=="17","LA_RIOJA",ifelse (idccaa=="18","CEUTA",ifelse (idccaa=="19","MELILLA","NA"))))))))))))))))))))
+  
+  #Convertimos los valores nulos en 0
   ds_low_cost2[is.na(ds_low_cost2)] <- 0
   
   #Diferenciamos por 24h
@@ -89,6 +107,7 @@ shinyServer(function(input, output, session){
   
   # FRONT ------------------------------------------------------------
   
+  #Imponemos las provinicas en base a la CCAA elegida
   observeEvent(input$CCAA, {
     freezeReactiveValue(input, "PROVINCIA")
     updateSelectizeInput(
@@ -96,11 +115,9 @@ shinyServer(function(input, output, session){
       inputId = "PROVINCIA",
       choices = DT[[input$CCAA]],
       selected = 1
-    )
-  }, ignoreInit = TRUE)
+    )}, ignoreInit = TRUE)
   
-  
-  
+  #Botón cargando
   observeEvent(input$boton, {
     show_modal_spinner(
       spin = 'bounce',
@@ -110,8 +127,8 @@ shinyServer(function(input, output, session){
     Sys.sleep(2)
     remove_modal_spinner()
     
+    # PESTAÑA DASHBOARD ------------------------------------------------------------
     
-    # FILTROS DE DATOS ------------------------------------------------------------
     output$comunidad = renderInfoBox({
       valueBox (
         value = input$CCAA,
@@ -140,6 +157,8 @@ shinyServer(function(input, output, session){
       )
     })
     
+    # FILTROS DE DATOS ------------------------------------------------------------
+    
     #Filtro provincia
     df_provincia <- filter(df_autoserv,provincia==input$PROVINCIA)
     
@@ -157,8 +176,8 @@ shinyServer(function(input, output, session){
       df_24 <- filter(df_lo,si_24H == FALSE)
     }
     
-    carb <- input$tipogasoleo
-    df_precio <- subset(df_24, precio_gasoleo_a < input$precio & precio_gasoleo_a > 0 )
+    #Filtro por precio
+    df_precio <- subset(df_24, df_24[input$tipogasoleo] < input$precio & df_24[input$tipogasoleo] > 0 )
     
     output$gas = renderDataTable(df_precio %>% select(provincia,rotulo, municipio, input$tipogasoleo, low_cost, si_24H, horario, autoservicio),
                                  options = list(pageLength = 10, info = TRUE))
@@ -169,6 +188,10 @@ shinyServer(function(input, output, session){
         write.csv(ds_low_cost2 %>% select(rotulo, municipio), fname)
       }
     )
+    
+    
+    # MAPA ------------------------------------------------------------
+    
     #pal <- colorFactor(palette = "YlGnBu", levels = ds_low_cost2$ccaa, reverse = TRUE)
     
     
