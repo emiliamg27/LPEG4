@@ -182,10 +182,32 @@ shinyServer(function(input, output, session){
     output$gas = renderDataTable(df_precio %>% select(provincia,rotulo, municipio, input$tipogasoleo, low_cost, si_24H, horario, autoservicio),
                                  options = list(pageLength = 10, info = TRUE))
     
+    # output$descargar <- downloadHandler(
+    #   filename = function(){"gasolineras.csv"}, 
+    #   content = function(fname){
+    #     write.csv(df_precio, fname)
+    #   }
+    # )
+    
     output$descargar <- downloadHandler(
-      filename = function(){"thename.csv"}, 
-      content = function(fname){
-        write.csv(ds_low_cost2 %>% select(rotulo, municipio), fname)
+      # Para la salida en PDF, usa "report.pdf"
+      filename = "report.html",
+      content = function(file) {
+        # Copia el reporte a un directorio temporal antes de porcesarlo, en 
+        #caso de que no tengamos permiso de escritura en el directorio actual
+        #puede ocurrir un error
+        tempReport <- file.path(tempdir(), "informe_prueba.Rmd")
+        file.copy("informe_prueba.Rmd", tempReport, overwrite = TRUE)
+        
+        # configurar los parametros para pasar al documento .Rmd
+        params <- list(n = input$precio)
+        
+        #Copilar el documento con la lista de parametros, de tal manera que se 
+        #evalue de la misma manera que el entorno de la palicacipon.
+        rmarkdown::render(tempReport, output_file = file,
+                          params = params,
+                          envir = new.env(parent = globalenv())
+        )
       }
     )
     
