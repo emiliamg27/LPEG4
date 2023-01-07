@@ -179,7 +179,8 @@ shinyServer(function(input, output, session){
     #Filtro por precio
     df_precio <- subset(df_24, df_24[input$tipogasoleo] < input$precio & df_24[input$tipogasoleo] > 0 )
     
-    output$gas = renderDataTable(df_precio %>% select(provincia,rotulo, municipio, input$tipogasoleo, low_cost, si_24H, horario, autoservicio),
+    tabla_final <- df_precio %>% select(provincia,rotulo, municipio, input$tipogasoleo, low_cost, si_24H, horario, autoservicio)
+    output$gas = renderDataTable(tabla_final,
                                  options = list(pageLength = 10, info = TRUE))
     
     # output$descargar <- downloadHandler(
@@ -193,16 +194,16 @@ shinyServer(function(input, output, session){
       # Para la salida en PDF, usa "report.pdf"
       filename = "report.html",
       content = function(file) {
-        # Copia el reporte a un directorio temporal antes de porcesarlo, en 
+        # Copia el reporte a un directorio temporal antes de porcesarlo, en
         #caso de que no tengamos permiso de escritura en el directorio actual
         #puede ocurrir un error
-        tempReport <- file.path(tempdir(), "informe_prueba.Rmd")
-        file.copy("informe_prueba.Rmd", tempReport, overwrite = TRUE)
-        
+        tempReport <- file.path(tempdir(), "informe.Rmd")
+        file.copy("informe.Rmd", tempReport, overwrite = TRUE)
+
         # configurar los parametros para pasar al documento .Rmd
-        params <- list(n = input$precio)
-        
-        #Copilar el documento con la lista de parametros, de tal manera que se 
+        params <- list(n = tabla_final)
+
+        #Copilar el documento con la lista de parametros, de tal manera que se
         #evalue de la misma manera que el entorno de la palicacipon.
         rmarkdown::render(tempReport, output_file = file,
                           params = params,
@@ -211,6 +212,17 @@ shinyServer(function(input, output, session){
       }
     )
     
+    # library(rmarkdown)
+    # function(input, output){
+    #   output$downloadWordReport =
+    #     downloadHandler(filename = "report.html",
+    #                     content = function(file){
+    #                       
+    #                       render("informe_prueba.Rmd", output_format ="html_document",
+    #                              output_file = file,
+    #                              quiet = TRUE)
+    #                     })
+    # }
     
     # MAPA ------------------------------------------------------------
     
