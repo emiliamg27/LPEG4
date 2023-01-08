@@ -133,7 +133,8 @@ ui = dashboardPage(
                           label = '¿Quiere una gasolinera LowCost?',
                           choices = list(
                             'Si' = 1,
-                            'No' = 2
+                            'No' = 2,
+                            'Indiferente' = 3
                           )
              )
            )
@@ -145,7 +146,8 @@ ui = dashboardPage(
                           label = '¿Quiere una gasolinera 24H?',
                           choices = list(
                             'Si' = 1,
-                            'No' = 2
+                            'No' = 2,
+                            'Indiferente' = 3
                           )
              )
            )
@@ -157,7 +159,8 @@ ui = dashboardPage(
                           label = '¿Quiere una gasolinera autoservicio?',
                           choices = list(
                             'Si' = 1,
-                            'No' = 2
+                            'No' = 2,
+                            'Indiferente' = 3
                           )
              )
            )
@@ -191,7 +194,8 @@ ui = dashboardPage(
         'Mapa', 
         fluidRow(
           box(width=12,
-              leafletOutput(outputId = "mymap")),
+              status = 'primary',
+              leafletOutput(outputId = "mymap", height = 600)),
           )
         ),
       #Tab Dashboard

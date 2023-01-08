@@ -165,29 +165,36 @@ shinyServer(function(input, output, session){
     #Filtro de low_cost
     if (input$lowcost==1){
       df_lo <- filter(df_provincia,low_cost == TRUE)
-    }else if (input$lowcost!=1){
+    }else if (input$lowcost==2){
       df_lo <- filter(df_provincia,low_cost == FALSE)
+    }else if (input$lowcost==3){
+      df_lo <- df_provincia
     }
+    
     
     #Filtro de 24_h
     if (input$si_24_h==1){
       df_24 <- filter(df_lo,si_24H == TRUE)
-    }else if (input$si_24_h!=1){
+    }else if (input$si_24_h==2){
       df_24 <- filter(df_lo,si_24H == FALSE)
+    }else if (input$si_24_h==3){
+      df_24 <- df_lo
     }
     
     #Filtro de autoservicio
     if (input$si_autoservicio==1){
       df_auto <- filter(df_24,autoservicio == TRUE)
-    }else if (input$si_autoservicio!=1){
+    }else if (input$si_autoservicio==2){
       df_auto <- filter(df_24,autoservicio == FALSE)
+    }else if (input$si_autoservicio==3){
+      df_auto <- df_24
     }
     
     #Filtro por precio
     df_precio <- subset(df_auto, df_auto[input$tipogasoleo] < input$precio & df_auto[input$tipogasoleo] > 0 )
     
     tabla_final <- df_precio %>% select(ccaa, provincia,rotulo, municipio, input$tipogasoleo, low_cost, si_24H, horario, autoservicio, latitud, longitud_wgs84)
-    output$gas = renderDataTable(tabla_final,
+    output$gas = renderDataTable(tabla_final%>% select(ccaa, provincia,rotulo, municipio, input$tipogasoleo, low_cost, si_24H, horario, autoservicio, latitud, longitud_wgs84),
                                  options = list(pageLength = 10, info = TRUE))
     
     # output$descargar <- downloadHandler(
@@ -233,23 +240,30 @@ shinyServer(function(input, output, session){
     
     # MAPA ------------------------------------------------------------
     
-    # pal <- colorFactor(pal = c("#1b9e77", "#d95f02", "#7570b3"), 
-    #                    domain = c("Charity", "Government", "Private"))
+    tabla_final$low_cost[tabla_final$low_cost == TRUE] <- 'Low_cost'
+    tabla_final$low_cost[tabla_final$low_cost == FALSE] <- 'NO_Low_cost'
     
-    pal <- colorFactor(palette = "YlGnBu", levels = ds_low_cost2$ccaa, reverse = TRUE)
+    tabla_final <- mutate(tabla_final, cntnt=paste0('<strong>CCAA: </strong>',ccaa,
+                                            '<br><strong>Provincia:</strong> ', provincia,
+                                            '<br><strong>Carburante:</strong> ', names(tabla_final[input$tipogasoleo]),
+                                            '<br><strong>Precio:</strong> ',input$tipogasoleo)) 
+    
+    pal <- colorFactor(pal = c("#1b9e77", "#d95f02"),domain = c('Low_cost', 'NO_Low_cost'))
+
+    #pal <- colorFactor(palette = "YlGnBu", levels = tabla_final$low_cost, reverse = TRUE)
     
     output$mymap <- renderLeaflet({
       leaflet(tabla_final) %>% 
         addCircles(lng = ~longitud_wgs84, lat = ~latitud) %>% 
         addTiles() %>%
         addCircleMarkers(data = tabla_final, lat =  ~latitud, lng =~longitud_wgs84, 
-                         radius = 12, 
-                         color = ~pal,
-                         stroke = FALSE, fillOpacity = 0)
-        # addLegend(pal=pal, values=tabla_final[input$tipogasoleo,],opacity=1, na.label = "Not Available")%>%
-        # addEasyButton(easyButton(
-        #   icon="fa-crosshairs", title="ME",
-        #   onClick=JS("function(btn, map){ map.locate({setView: true}); }")))
+                         radius = 12, popup = ~as.character(cntnt),
+                         color = ~pal(low_cost),
+                         stroke = FALSE, fillOpacity = 0)%>% 
+        addLegend(pal=pal, values=tabla_final$low_cost,opacity=1, na.label = "Not Available")%>%
+        addEasyButton(easyButton(
+          icon="fa-crosshairs", title="ME",
+          onClick=JS("function(btn, map){ map.locate({setView: true}); }")))
     })
     
     #pal <- colorFactor(palette = "YlGnBu", levels = ds_low_cost2$ccaa, reverse = TRUE)
