@@ -186,7 +186,7 @@ shinyServer(function(input, output, session){
     #Filtro por precio
     df_precio <- subset(df_auto, df_auto[input$tipogasoleo] < input$precio & df_auto[input$tipogasoleo] > 0 )
     
-    tabla_final <- df_precio %>% select(provincia,rotulo, municipio, input$tipogasoleo, low_cost, si_24H, horario, autoservicio)
+    tabla_final <- df_precio %>% select(ccaa, provincia,rotulo, municipio, input$tipogasoleo, low_cost, si_24H, horario, autoservicio, latitud, longitud_wgs84)
     output$gas = renderDataTable(tabla_final,
                                  options = list(pageLength = 10, info = TRUE))
     
@@ -232,6 +232,23 @@ shinyServer(function(input, output, session){
     # }
     
     # MAPA ------------------------------------------------------------
+    
+    pal <- colorFactor(pal = c("#1b9e77", "#d95f02", "#7570b3"), 
+                       domain = c("Charity", "Government", "Private"))
+    
+    output$mymap <- renderLeaflet({
+      leaflet(tabla_final) %>% 
+        addCircles(lng = ~longitud_wgs84, lat = ~latitud) %>% 
+        addTiles() %>%
+        addCircleMarkers(data = tabla_final, lat =  ~latitud, lng =~longitud_wgs84, 
+                         radius = 3, 
+                         color = ~pal(provincia),
+                         stroke = FALSE, fillOpacity = 0.8)%>%
+        addLegend(pal=pal, values=tabla_final[input$tipogasoleo,],opacity=1, na.label = "Not Available")%>%
+        addEasyButton(easyButton(
+          icon="fa-crosshairs", title="ME",
+          onClick=JS("function(btn, map){ map.locate({setView: true}); }")))
+    })
     
     #pal <- colorFactor(palette = "YlGnBu", levels = ds_low_cost2$ccaa, reverse = TRUE)
     
