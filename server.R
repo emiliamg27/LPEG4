@@ -249,7 +249,9 @@ shinyServer(function(input, output, session){
                                             '<br><strong>Precio:</strong> ',input$tipogasoleo)) 
     
     pal <- colorFactor(pal = c("#1b9e77", "#d95f02"),domain = c('Low_cost', 'NO_Low_cost'))
-
+    
+    pal <- colorFactor(topo.colors(5),tabla_final$low_cost)
+    
     #pal <- colorFactor(palette = "YlGnBu", levels = tabla_final$low_cost, reverse = TRUE)
     
     output$mymap <- renderLeaflet({
@@ -258,9 +260,17 @@ shinyServer(function(input, output, session){
         addTiles() %>%
         addCircleMarkers(data = tabla_final, lat =  ~latitud, lng =~longitud_wgs84, 
                          radius = 12, popup = ~as.character(cntnt),
+                         label = paste0(as.character(tabla_final[input$tipogasoleo])," | Casos confirmados: ", as.character(tabla_final$provincia)),
                          color = ~pal(low_cost),
                          stroke = FALSE, fillOpacity = 0)%>% 
-        addLegend(pal=pal, values=tabla_final$low_cost,opacity=1, na.label = "Not Available")%>%
+        addProviderTiles(providers$CartoDB.PositronNoLabels) %>% 
+        # addLegend(pal=pal, values=tabla_final$low_cost,opacity=1, na.label = "Not Available")%>%
+        
+        addLegend("bottomright", pal = pal, values = ~low_cost,
+                  title = "Tipo de gasolinera",
+                  opacity = 1
+        )%>%
+        
         addEasyButton(easyButton(
           icon="fa-crosshairs", title="ME",
           onClick=JS("function(btn, map){ map.locate({setView: true}); }")))
