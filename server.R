@@ -87,8 +87,8 @@ shinyServer(function(input, output, session){
   
   #Creamos columna con el nombre de las CCAA
   ds_low_cost2 <- ds_low_cost%>% mutate(ds_low_cost,ccaa = ifelse (idccaa=="01","ANDALUCÍA",ifelse (idccaa=="02","ARAGÓN", ifelse (idccaa=="03","ASTURIAS", ifelse (idccaa=="04","ISLAS_BALEARES", 
-                                                           ifelse (idccaa=="05","CANARIAS",ifelse (idccaa=="06","CANTABRIA", ifelse (idccaa=="07","CASTILLA_Y_LEÓN", 
-                                                           ifelse (idccaa=="08","CASTILLA_LA_MANCHA", ifelse (idccaa=="09","CATALUÑA", ifelse (idccaa=="10","COMUNIDAD_VALENCIANA",
+                                                           ifelse (idccaa=="05","CANARIAS",ifelse (idccaa=="06","CANTABRIA", ifelse (idccaa=="07","CASTILLA_LA_MANCHA", 
+                                                           ifelse (idccaa=="08","CASTILLA_Y_LEÓN", ifelse (idccaa=="09","CATALUÑA", ifelse (idccaa=="10","COMUNIDAD_VALENCIANA",
                                                            ifelse (idccaa=="11","EXTREMADURA", ifelse (idccaa=="12","GALICIA", ifelse (idccaa=="13","COMUNIDAD_DE_MADRID", ifelse (idccaa=="14","MURCIA", ifelse (idccaa=="15","NAVARRA",
                                                            ifelse (idccaa=="16","PAÍS_VASCO", ifelse (idccaa=="17","LA_RIOJA",ifelse (idccaa=="18","CEUTA",ifelse (idccaa=="19","MELILLA","NA"))))))))))))))))))))
   
@@ -233,21 +233,23 @@ shinyServer(function(input, output, session){
     
     # MAPA ------------------------------------------------------------
     
-    pal <- colorFactor(pal = c("#1b9e77", "#d95f02", "#7570b3"), 
-                       domain = c("Charity", "Government", "Private"))
+    # pal <- colorFactor(pal = c("#1b9e77", "#d95f02", "#7570b3"), 
+    #                    domain = c("Charity", "Government", "Private"))
+    
+    pal <- colorFactor(palette = "YlGnBu", levels = ds_low_cost2$ccaa, reverse = TRUE)
     
     output$mymap <- renderLeaflet({
       leaflet(tabla_final) %>% 
         addCircles(lng = ~longitud_wgs84, lat = ~latitud) %>% 
         addTiles() %>%
         addCircleMarkers(data = tabla_final, lat =  ~latitud, lng =~longitud_wgs84, 
-                         radius = 3, 
-                         color = ~pal(provincia),
-                         stroke = FALSE, fillOpacity = 0.8)%>%
-        addLegend(pal=pal, values=tabla_final[input$tipogasoleo,],opacity=1, na.label = "Not Available")%>%
-        addEasyButton(easyButton(
-          icon="fa-crosshairs", title="ME",
-          onClick=JS("function(btn, map){ map.locate({setView: true}); }")))
+                         radius = 12, 
+                         color = ~pal,
+                         stroke = FALSE, fillOpacity = 0)
+        # addLegend(pal=pal, values=tabla_final[input$tipogasoleo,],opacity=1, na.label = "Not Available")%>%
+        # addEasyButton(easyButton(
+        #   icon="fa-crosshairs", title="ME",
+        #   onClick=JS("function(btn, map){ map.locate({setView: true}); }")))
     })
     
     #pal <- colorFactor(palette = "YlGnBu", levels = ds_low_cost2$ccaa, reverse = TRUE)
