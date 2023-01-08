@@ -176,8 +176,15 @@ shinyServer(function(input, output, session){
       df_24 <- filter(df_lo,si_24H == FALSE)
     }
     
+    #Filtro de autoservicio
+    if (input$si_autoservicio==1){
+      df_auto <- filter(df_24,autoservicio == TRUE)
+    }else if (input$si_autoservicio!=1){
+      df_auto <- filter(df_24,autoservicio == FALSE)
+    }
+    
     #Filtro por precio
-    df_precio <- subset(df_24, df_24[input$tipogasoleo] < input$precio & df_24[input$tipogasoleo] > 0 )
+    df_precio <- subset(df_auto, df_auto[input$tipogasoleo] < input$precio & df_auto[input$tipogasoleo] > 0 )
     
     tabla_final <- df_precio %>% select(provincia,rotulo, municipio, input$tipogasoleo, low_cost, si_24H, horario, autoservicio)
     output$gas = renderDataTable(tabla_final,

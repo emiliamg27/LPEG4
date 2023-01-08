@@ -150,6 +150,18 @@ ui = dashboardPage(
              )
            )
     ),
+    #Filtro autoservicio
+    column(12,
+           fluidRow(
+             radioButtons('si_autoservicio',
+                          label = '¿Quiere una gasolinera autoservicio?',
+                          choices = list(
+                            'Si' = 1,
+                            'No' = 2
+                          )
+             )
+           )
+    ),
     #Botón
     column(12,
            fluidRow(
