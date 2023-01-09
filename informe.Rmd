@@ -1,0 +1,104 @@
+---
+title: "Informe de las gasolineras"
+output: 
+  ioslides_presentation: 
+    highlight: kate
+date: "`r Sys.Date()`"
+params:
+    n: NA
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(tidyverse)
+library(magrittr)
+library(janitor)
+library(lubridate)
+library(tidyr)
+library(httr)
+library(jsonlite)
+
+# CARGA DE DATOS ---------------------------------------------------------
+url_ <- "https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/"
+
+f_raw <- jsonlite::fromJSON(url_)
+df_source <- f_raw$ListaEESSPrecio 
+janitor::clean_names(df_source) 
+
+#ver config
+locale() 
+#Cambiamos config
+df1<-df_source %>% janitor::clean_names() %>% type_convert(locale = locale(decimal_mark = ","))
+str_squish(df1$rotulo)
+
+# CREAR NUEVAS VARIABLES ------------------------------------------------
+
+##Clasificamos por gasolineras baratas y no baratas NUEVA COLUMNA
+df2 <- df1 %>% mutate(lowcost =! rotulo %in% c("CEPSA", "REPSOL", "BP", "SHELL"))
+
+#Filtrado por 24 h
+
+df2 %>% count(horario, sort = TRUE)
+no_24h <- df2  %>% mutate('24H' = horario %in% 'L-D: 24H')
+
+##Columna nombre ccaa
+df3 <- df2%>% mutate(df2,ccaa = ifelse (idccaa=="01","ANDALUCIA",ifelse (idccaa=="02","ARAGON", ifelse (idccaa=="03","ASTURIAS", ifelse (idccaa=="04","BALEARES", 
+                                                                                                                                                ifelse (idccaa=="05","CANARIAS",ifelse (idccaa=="06","CANTABRIA", ifelse (idccaa=="07","CASTILLA Y LEON", 
+                                                                                                                                                                                                                   ifelse (idccaa=="08","CASTILLA - LA MANCHA", ifelse (idccaa=="09","CATALUÑA", ifelse (idccaa=="10","COMUNIDAD VALENCIANA",
+                                                                                                                                                                                                                                                                                                                ifelse (idccaa=="11","EXTREMADURA", ifelse (idccaa=="12","GALICIA", ifelse (idccaa=="13","MADRID", ifelse (idccaa=="14","MURCIA", ifelse (idccaa=="15","NAVARRA",
+                                                                                                                                                                                                                                                                                                                                                                                                                                                          ifelse (idccaa=="16","PAIS VASCO", ifelse (idccaa=="17","LA RIOJA",ifelse (idccaa=="18","CEUTA",ifelse (idccaa=="19","MELILLA","NA"))))))))))))))))))))
+##Precio medio del gasoleo en las CCAA
+df4 <- df3 %>% select(precio_gasoleo_a, precio_gasolina_95_e5, idccaa, rotulo, lowcost) %>% drop_na() %>% group_by(idccaa, lowcost) %>% summarize(mean(precio_gasoleo_a), mean(precio_gasolina_95_e5))
+```
+
+
+## Introducción
+
+En este informe encontrará la información más relevante sobre:
+
+- Gasolineras: rótulo, horario, si es lowcost, etc.
+- Precio del carburante 
+- Población de un lugar concreto
+
+Toda la información proporcionada en este informe ha sido extraida de [aquí](https://sede.serviciosmin.gob.es/)<https://sede.serviciosmin.gob.es/>.
+
+TABLAS <https://perezp44.github.io/intro-ds-20-21-web/tutoriales/tt_08_tablas-Rmarkdown.html>
+
+
+## Población y número de gasolineras
+
+```{r}
+# The `params` object is available in the document.
+plot(params$n$precio_gasoleo_a)
+```
+
+## Precio medio por gasolinera
+
+```{r cars, echo = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::kable(head(params$n), align = "lccrr")
+```
+
+## Slide with Plot
+
+```{r pressure}
+barplot(prop.table(table(params$n$precio_gasoleo_a)))
+```
+
+## Información
+El carburante más caro cuesta: 
+```{r info}
+max_c <- max(params$n$precio_gasoleo_a)
+max_c
+```
+El carburante más barato cuesta:
+```{r info_min}
+min_c <- min(params$n$precio_gasoleo_a)
+min_c
+```
+
+
+
+
+

@@ -1,0 +1,10 @@
+#```{r}
+# El objeto parametros esta`params` en el documento. 
+#params$n
+#```
+
+#Se modifica desde la app y se opera con ellos en el documento Rmd. Por ejemplo en esta app se hace una grafica de una muestra aleatoria normal.
+
+#```{r}
+#plot(rnorm(params$n), rnorm(params$n))
+#```
