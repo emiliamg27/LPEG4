@@ -51,7 +51,7 @@ df3 %>% select(precio_gasoleo_a, precio_gasolina_95_e5, idccaa, rotulo, lowcost)
 ##Unimos con un dataset con la poblacion total, hombres y mujeres de cada municipio
 
 library(readxl)
-pobmun21 <- read_excel("pobmun21.xlsx", skip = 1)%>%view()
+pobmun21 <- read_excel("/Users/albalagunamoraleda/Documents/LPE22017327/LPEG4/pobmun21.xlsx", skip = 1)%>%view()
 columnapob<-select(pobmun21, POB21, municipio,id_provincia,HOMBRES,MUJERES)
 
 columnapob%>%view()
@@ -63,7 +63,7 @@ df_pob_d <- df_pob %>% distinct(direccion, .keep_all = TRUE)
 #Añadimos tipo servicio
 
 library(readxl)
-tipo_servicio <- read_excel("preciosEESS_es.xls", skip = 3)
+tipo_servicio <- read_excel("/Users/albalagunamoraleda/Documents/LPE22017327/LPEG4/preciosEESS_es.xls", skip = 3)
 columnaserv<-select(tipo_servicio, direccion, Tipo_servicio)
 df_servicio <-merge(x = df_pob_d, y = columnaserv, by=c("direccion"), all.x = TRUE)
 df_servicio_personal<-df_servicio %>% mutate(autoservicio = str_detect(Tipo_servicio,pattern = "(A)")) %>%view()
@@ -72,20 +72,20 @@ df_servicio_personal<-df_servicio %>% mutate(autoservicio = str_detect(Tipo_serv
 p_load(tidyverse, janitor, jsonlite, leaflet, geosphere, mapsapi,xml2,mapsapi)
 distancias<-df_servicio_personal %>% select(latitud,longitud_wgs84, rotulo,direccion)
 
-
-
-#ds_w_pob %>% select(pob21,municipio) %>% filter(pob21>=15000) %>%count(pob21,municipio, sort = TRUE) %>%  view()
 uem <- c(-3.919257897378161, 40.373942679873714)
+direccion <- "Calle de Goya, 88, 28009 Madrid"
+key= "AIzaSyBRMg-WgkdJSg30zDdtALjHapL1Z4v06As"
+res<-mp_geocode(direccion,key=key)
+bar<-mp_get_points(res)%>%select(pnt)
+bar2<-as.numeric(unlist(bar))
 
+#distancias_villa <- distancias %>%select(longitud_wgs84,latitud) %>% distGeo(uem)
 
+#df_distancias<-df_servicio_personal%>%  mutate(distancias = round(distancias_villa/1000, digits = 2)) %>% view()
 
-distancias_villa <- distancias %>%select(longitud_wgs84,latitud) %>% distGeo(uem)
+distancias_cualquiera<-distancias %>% select(longitud_wgs84,latitud) %>% distGeo(bar2)
 
-
-df_distancias<-df_servicio_personal%>%  mutate(distancias = round(distancias_villa/1000, digits = 2)) %>% view()
-
+df_cualquiera<-df_servicio_personal%>%  mutate(distancias = round(distancias_cualquiera/1000, digits = 2))%>%view()
 # READING AND WRITING (FILES) ---------------------------------------------
-
-
 
 
